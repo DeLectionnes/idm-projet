@@ -1,2 +1,11 @@
 #fichiers compilés java
 **.class
+#fichiers eclipse
+.metadata/**
+**/.classpath
+**/.project
+**/build.properties
+**.MF
+**.prefs
+**.mwe2
+**.launch

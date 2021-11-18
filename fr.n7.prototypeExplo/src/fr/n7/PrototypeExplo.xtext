@@ -1,0 +1,73 @@
+grammar fr.n7.PrototypeExplo with org.eclipse.xtext.common.Terminals
+
+generate prototypeExplo "http://www.n7.fr/PrototypeExplo"
+/*Type booléen */
+Bool: true = 'true'|false = 'false';
+
+/* Description des conditions*/
+Comparator: lt='<' | gt='>' | lte='<=' | gte='>=' | eq='=' | neq='!=';
+Negation: 'not';
+AtomicCondition: Negation? ((item=Item comparateur=Comparator constante=INT )| Knowledge);
+Conjunction: conditions += AtomicCondition ('and' conditions += AtomicCondition)*;
+NormalDisjunctiveForm: conjunctions += Conjunction ('or' conjunctions += Conjunction)*;
+
+
+/*E3 E6*/
+Explorer: 'explorer' name=ID 'maxSize' maxSize=INT 'items' items+=InteractableItem* 'knowledges' knowledges+=InteractableKnowledge*;
+
+/*E5 E40 E41 E42*/
+Item: 'item' name=ID 'description' description+=Description 'size' size=INT 'visible' isVisible=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)?;
+
+
+/*E3 */
+Knowledge: 'knowledge' name=ID 'description' description+=Description 'VisibleCondition' visibleCondition=Condition;
+
+/*E7 E14*/
+Place: 'place' name=ID 'description' description+=Description 'type' type=PlaceType 'canPlaceItem' canPlaceItem=Bool ('items' items+=Item+)? ('knowledges' knowledges+=Knowledge+)? ('NPCs' npcs+=NPC+)?;
+
+/*E8 */
+PlaceType: normal = 'normal'
+	| begin = 'begin'
+	| end = 'end'
+;
+
+/*E9 E10 E11 E16 E20*/
+Path: 'path' name=ID 'description' description+=Description 'VisibleCondition' visibleCondition=Condition 'isOpened' isOpened=Bool 'isObligatory' isObligatory=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)? 'extremity1' startingPlace=Place 'extremity2' finishingPlace=Place ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
+
+/*E23 */
+Condition: 'condition' name=ID 'formula' formula=NormalDisjunctiveForm;
+
+ConditionalItem: 'conditionnalItem' condition=Condition 'for' item=Item;
+
+InteractableItem: Item|ConditionalItem;
+
+ConditionalKnowledge: 'conditionnalKnowledge' condition=Condition 'for' knowledge=Knowledge;
+
+InteractableKnowledge: Knowledge|ConditionalKnowledge;
+
+/*E25 */
+NPC: 'npc' name=ID 'isObligatory' isObligatory=Bool 'VisibleCondition' visibleCondition=Condition;
+
+Action: 'action' name=ID ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
+
+
+
+
+DescribableElements: MapElements | Knowledge | Item;
+
+Description: 'description' description=STRING | condition=Condition description=STRING;
+
+ChoiceType: normal = 'normal'
+	| begin = 'begin'
+	| end = 'end'
+;
+ConditionalChoice: 'conditionnalChoice' condition=Condition 'for' Choice=Choice;
+ProposedChoice: Choice | ConditionalChoice;
+
+
+/* E30 */
+Choice: 'choice' name=ID 'type' type=ChoiceType 'condition' condition=Condition ;
+
+MapElements: Place | Path;
+
+Map: 'map' name=ID 'elements' explorer=Explorer elements+=MapElements+;
