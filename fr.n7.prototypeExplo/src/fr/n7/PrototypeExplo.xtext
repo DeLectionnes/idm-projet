@@ -5,7 +5,7 @@ Map: 'map' name=ID 'elements' explorer=Explorer elements+=MapElements+;
 
 
 /*E3 E6*/
-Explorer: 'explorer' name=ID 'maxSize' maxSize=INT 'items' items+=InteractableItem* 'knowledges' knowledges+=InteractableKnowledge*;
+Explorer: 'explorer' name=STRING 'maxSize' maxSize=INT 'items' items+=InteractableItem* 'knowledges' knowledges+=InteractableKnowledge*;
 
 MapElements: Place | Path;
 
@@ -21,19 +21,19 @@ InteractableItem: Item|ConditionalItem;
 InteractableKnowledge: Knowledge|ConditionalKnowledge;
 
 /*E7 E14*/
-Place: 'place' name=ID 'description' description+=Description 'type' type=PlaceType 'canPlaceItem' canPlaceItem=Bool ('items' items+=Item+)? ('knowledges' knowledges+=Knowledge+)? ('NPCs' npcs+=NPC+)?;
+Place: 'place' name=STRING 'description' description+=Description 'type' type=PlaceType 'canPlaceItem' canPlaceItem=Bool ('items' items+=Item+)? ('knowledges' knowledges+=Knowledge+)? ('NPCs' npcs+=NPC+)?;
 
 /*E9 E10 E11 E16 E20*/
-Path: 'path' name=ID 'description' description+=Description 'VisibleCondition' visibleCondition=Condition 'isOpened' isOpened=Bool 'isObligatory' isObligatory=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)? 'extremity1' startingPlace=Place 'extremity2' finishingPlace=Place ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
+Path: 'path' name=STRING 'description' description+=Description 'VisibleCondition' visibleCondition=Condition 'isOpened' isOpened=Bool 'isObligatory' isObligatory=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)? 'extremity1' startingPlace=Place 'extremity2' finishingPlace=Place ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
 
 
 /*E5 E40 E41 E42*/
-Item: 'item' name=ID 'description' description+=Description 'size' size=INT 'visible' isVisible=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)?;
+Item: 'item' name=STRING 'description' description+=Description 'size' size=INT 'visible' isVisible=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)?;
 
 ConditionalItem: 'conditionnalItem' condition=Condition 'for' item=Item;
 
 /*E3 */
-Knowledge: 'knowledge' name=ID 'description' description+=Description 'VisibleCondition' visibleCondition=Condition;
+Knowledge: 'knowledge' name=STRING 'description' description+=Description 'VisibleCondition' visibleCondition=Condition;
 
 ConditionalKnowledge: 'conditionnalKnowledge' condition=Condition 'for' knowledge=Knowledge;
 
@@ -49,10 +49,10 @@ PlaceType: normal = 'normal'
 Bool: true = 'true'|false = 'false';
 
 /*E25 */
-NPC: 'npc' name=ID 'isObligatory' isObligatory=Bool 'VisibleCondition' visibleCondition=Condition;
+NPC: 'npc' name=STRING 'isObligatory' isObligatory=Bool 'VisibleCondition' visibleCondition=Condition;
 
 /*E23 */
-Condition: 'condition' name=ID 'formula' formula=NormalDisjunctiveForm;
+Condition: 'condition' name=STRING 'formula' formula=NormalDisjunctiveForm;
 
 /* Description des conditions*/
 Comparator: lt='<' | gt='>' | lte='<=' | gte='>=' | eq='=' | neq='!=';
@@ -65,7 +65,7 @@ NormalDisjunctiveForm: conjunctions += Conjunction ('or' conjunctions += Conjunc
 
 
 /* E30 */
-Choice: 'choice' name=ID 'type' type=ChoiceType 'condition' condition=Condition ;
+Choice: 'choice' name=STRING 'type' type=ChoiceType 'condition' condition=Condition ;
 
 ChoiceType: normal = 'normal'
 	| begin = 'begin'
@@ -75,7 +75,7 @@ ChoiceType: normal = 'normal'
 ConditionalChoice: 'conditionnalChoice' condition=Condition 'for' Choice=Choice;
 ProposedChoice: Choice | ConditionalChoice;
 
-Action: 'action' name=ID ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
+Action: 'action' name=STRING ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
 
 
 
