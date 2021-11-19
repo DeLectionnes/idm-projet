@@ -11,33 +11,30 @@ MapElements: Place | Path;
 
 DescribableElements: MapElements | Knowledge | Item;
 
-
+Description: description=STRING | condition=ConditionID description=STRING;
 
 
 /*Un InteractableItem sans condition est un objet dont la condition est toujours vraie*/
-InteractableItem: Item|ConditionalItem;
+InteractableItem: {InteractableItem} ItemID|ConditionalItem;
 
-/*Un InteractableKnowledge sans condition est une connaissance dont la condition est toujours vraie*/
-InteractableKnowledge: Knowledge|ConditionalKnowledge;
-
-/*E7 E14*/
-Place: 'place' name=STRING 'description' description+=Description 'type' type=PlaceType 'canPlaceItem' canPlaceItem=Bool ('items' items+=Item+)? ('knowledges' knowledges+=Knowledge+)? ('NPCs' npcs+=NPC+)?;
-
-/*E9 E10 E11 E16 E20*/
-Path: 'path' name=STRING 'description' description+=Description 'VisibleCondition' visibleCondition=Condition 'isOpened' isOpened=Bool 'isObligatory' isObligatory=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)? 'extremity1' startingPlace=Place 'extremity2' finishingPlace=Place ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
-
+ConditionalItem: 'conditionnalItem' condition=ConditionID 'for' item=ItemID;
 
 /*E5 E40 E41 E42*/
-Item: 'item' name=STRING 'description' description+=Description 'size' size=INT 'visible' isVisible=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)?;
+Item: 'item' name=STRING 'description' description=Description 'size' size=INT 'visible' isVisible=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)?;
 
-ConditionalItem: 'conditionnalItem' condition=Condition 'for' item=Item;
+
+/*Un InteractableKnowledge sans condition est une connaissance dont la condition est toujours vraie*/
+InteractableKnowledge: {InteractableKnowledge} KnowledgeID|ConditionalKnowledge;
+
+ConditionalKnowledge: 'conditionnalKnowledge' condition=ConditionID 'for' knowledge=KnowledgeID;
 
 /*E3 */
-Knowledge: 'knowledge' name=STRING 'description' description+=Description 'VisibleCondition' visibleCondition=Condition;
+Knowledge: 'knowledge' name=STRING 'description' description=Description 'VisibleCondition' visibleCondition=ConditionID;
 
-ConditionalKnowledge: 'conditionnalKnowledge' condition=Condition 'for' knowledge=Knowledge;
 
-Description: description=STRING | condition=Condition description=STRING;
+
+/*E7 E14*/
+Place: 'place' name=STRING 'description' description=Description 'type' type=PlaceType 'canPlaceItem' canPlaceItem=Bool 'paths' paths+=PathID+ ('items' items+=ItemID+)? ('knowledges' knowledges+=KnowledgeID+)? ('NPCs' npcs+=NPCID+)?;
 
 /*E8 */
 PlaceType: normal = 'normal'
@@ -45,11 +42,15 @@ PlaceType: normal = 'normal'
 	| end = 'end'
 ;
 
+/*E9 E10 E11 E16 E20*/
+Path: 'path' name=STRING 'description' description+=Description 'VisibleCondition' visibleCondition=Condition 'isOpened' isOpened=Bool 'isObligatory' isObligatory=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)? 'extremity1' startingPlace=PlaceID 'extremity2' finishingPlace=PlaceID ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
+
+
 /*Type booléen */
 Bool: true = 'true'|false = 'false';
 
 /*E25 */
-NPC: 'npc' name=STRING 'isObligatory' isObligatory=Bool 'VisibleCondition' visibleCondition=Condition;
+NPC: 'npc' name=STRING 'isObligatory' isObligatory=Bool 'VisibleCondition' visibleCondition=ConditionID;
 
 /*E23 */
 Condition: 'condition' name=STRING 'formula' formula=NormalDisjunctiveForm;
@@ -62,24 +63,28 @@ Conjunction: conditions += AtomicCondition ('and' conditions += AtomicCondition)
 NormalDisjunctiveForm: conjunctions += Conjunction ('or' conjunctions += Conjunction)*;
 
 
-
-
 /* E30 */
-Choice: 'choice' name=STRING 'type' type=ChoiceType 'condition' condition=Condition ;
+Choice: 'choice' name=STRING 'type' type=ChoiceType 'condition' condition=ConditionID ;
 
 ChoiceType: normal = 'normal'
 	| begin = 'begin'
 	| end = 'end'
 ;
 
-ConditionalChoice: 'conditionnalChoice' condition=Condition 'for' Choice=Choice;
+ConditionalChoice: 'conditionnalChoice' condition=ConditionID 'for' Choice=Choice;
 ProposedChoice: Choice | ConditionalChoice;
 
 Action: 'action' name=STRING ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
 
-
-
-
+/*En soit inutile, pour se repérer plus facilement */
+ItemID: STRING;
+KnowledgeID: STRING;
+ConditionID: STRING;
+PlaceID: STRING;
+PathID: STRING;
+NPCID: STRING;
+ChoiceID: STRING;
+ActionID: STRING;
 
 
 
