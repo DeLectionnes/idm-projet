@@ -43,14 +43,14 @@ PlaceType: normal = 'normal'
 ;
 
 /*E9 E10 E11 E16 E20*/
-Path: 'path' name=STRING 'description' description+=Description 'VisibleCondition' visibleCondition=Condition 'isOpened' isOpened=Bool 'isObligatory' isObligatory=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)? 'extremity1' startingPlace=PlaceID 'extremity2' finishingPlace=PlaceID ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
+Path: 'path' name=STRING 'description' description+=Description 'visibleCondition' visibleCondition=Condition 'isOpened' isOpened=Bool 'isObligatory' isObligatory=Bool ('transformabilityConditions' transformabilityCondition=InteractableItem)? 'extremity1' startingPlace=PlaceID 'extremity2' finishingPlace=PlaceID ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
 
 
 /*Type booléen */
 Bool: true = 'true'|false = 'false';
 
 /*E25 */
-NPC: 'npc' name=STRING 'isObligatory' isObligatory=Bool 'VisibleCondition' visibleCondition=ConditionID;
+NPC: 'npc' name=STRING 'isObligatory' isObligatory=Bool 'visibleCondition' visibleCondition=ConditionID 'initialChoices' initialChoice+=BeginningChoice+;
 
 /*E23 */
 Condition: 'condition' name=STRING 'formula' formula=NormalDisjunctiveForm;
@@ -64,17 +64,28 @@ NormalDisjunctiveForm: conjunctions += Conjunction ('or' conjunctions += Conjunc
 
 
 /* E30 */
-Choice: 'choice' name=STRING 'type' type=ChoiceType 'condition' condition=ConditionID ;
+Choice: 'choice' name=STRING 'condition' condition=ConditionID 'endingCondition' endingCondition=ConditionID 'actions' actions+=ConditionnalAction+ 'suivant' suivant=ChoiceID;
+
+BeginningChoice: 'beginning' Choice;
 
 ChoiceType: normal = 'normal'
 	| begin = 'begin'
 	| end = 'end'
 ;
 
-ConditionalChoice: 'conditionnalChoice' condition=ConditionID 'for' Choice=Choice;
-ProposedChoice: Choice | ConditionalChoice;
+ConditionalChoice: 'conditionnalChoice' condition=ConditionID 'for' Choice=ChoiceID;
+ProposedChoice: {ProposedChoice} ChoiceID | ConditionalChoice;
 
 Action: 'action' name=STRING ('items' items+=InteractableItem+)? ('knowledges' knowledges+=InteractableKnowledge+)? ('itemsConsumed' itemsConsumed+=InteractableItem+)?;
+
+ConditionnalAction: 'conditionnalAction' condition=ConditionID ('precedentActions' precedentActions+=ActionCondition+)? 'for' action=ActionID;
+
+
+/*Définition de forme normale disjonctive d'actions, pour les actions proposées */
+ActionAtomicCondition: Negation? choice=ChoiceID;
+ActionConjunction: conditions += ActionAtomicCondition ('and' conditions += ActionAtomicCondition)*;
+ActionNormalDisjunctiveForm: conjunctions += ActionConjunction ('or' conjunctions += ActionConjunction)*;
+ActionCondition: ActionNormalDisjunctiveForm;
 
 /*En soit inutile, pour se repérer plus facilement */
 ItemID: STRING;
