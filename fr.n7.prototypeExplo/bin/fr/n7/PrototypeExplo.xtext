@@ -14,13 +14,13 @@ DescribableElements: MapElements | Knowledge | Item;
 Description: description=STRING | condition=ConditionID description=STRING;
 
 
-ConditionalItem: 'conditionnalItem' condition=ConditionID 'for' item=ItemID;
+ConditionalItem: 'condition' condition=ConditionID 'for' item=ItemID;
 
 /*E5 E40 E41 E42*/
 Item: 'item' name=STRING 'description' description=Description 'size' size=INT 'visible' isVisible=Bool ('transformabilityConditions' transformabilityCondition=ConditionalItem)?;
 
 
-ConditionalKnowledge: 'conditionnalKnowledge' condition=ConditionID 'for' knowledge=KnowledgeID;
+ConditionalKnowledge: 'condition' condition=ConditionID 'for' knowledge=KnowledgeID;
 
 /*E3 */
 Knowledge: 'knowledge' name=STRING 'description' description=Description 'VisibleCondition' visibleCondition=ConditionID;
@@ -67,7 +67,7 @@ ChoiceType: normal = 'normal'
 	| end = 'end'
 ;
 
-ConditionalChoice: 'conditionnalChoice' condition=ConditionID 'for' Choice=ChoiceID;
+ConditionalChoice: 'condition' condition=ConditionID 'for' Choice=ChoiceID;
 ProposedChoice: {ProposedChoice} ChoiceID | ConditionalChoice;
 
 Action: 'action' name=STRING ('items' items+=ConditionalItem+)? ('knowledges' knowledges+=ConditionalKnowledge+)? ('itemsConsumed' itemsConsumed+=ConditionalItem+)?;
