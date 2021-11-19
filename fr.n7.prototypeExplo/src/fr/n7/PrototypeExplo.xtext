@@ -1,34 +1,66 @@
 grammar fr.n7.PrototypeExplo with org.eclipse.xtext.common.Terminals
 
 generate prototypeExplo "http://www.n7.fr/PrototypeExplo"
-Map: 'map' name=ID 'elements' explorer=Explorer elements+=MapElements+;
+Map: 'map' name=ID 
+	'elements' explorer=Explorer elements+=MapElements+
+;
 
 
 /*E3 E6*/
-Explorer: 'explorer' name=STRING 'maxSize' maxSize=INT 'items' items+=ConditionalItem* 'knowledges' knowledges+=ConditionalKnowledge*;
+Explorer: 'explorer' name=STRING 
+	'maxSize' maxSize=INT 
+	'items' items+=ConditionalItem* 
+	'knowledges' knowledges+=ConditionalKnowledge*
+;
 
-MapElements: Place | Path;
+MapElements: Place 
+	| Path
+;
 
-DescribableElements: MapElements | Knowledge | Item;
+DescribableElements: MapElements 
+	| Knowledge 
+	| Item
+;
 
-Description: description=STRING | condition=ConditionID description=STRING;
+Description: description=STRING 
+	| condition=ConditionID description=STRING
+;
 
 
-ConditionalItem: 'condition' condition=ConditionID 'for' item=ItemID;
+ConditionalItem: 'condition' condition=ConditionID 
+	'for' item=ItemID
+;
 
 /*E5 E40 E41 E42*/
-Item: 'item' name=STRING 'description' description=Description 'size' size=INT 'visible' isVisible=Bool ('transformabilityConditions' transformabilityCondition=ConditionalItem)?;
+Item: 'item' name=STRING 
+	'description' description=Description 
+	'size' size=INT 
+	'visible' isVisible=Bool 
+	('transformabilityConditions' transformabilityCondition=ConditionalItem)?
+;
 
 
-ConditionalKnowledge: 'condition' condition=ConditionID 'for' knowledge=KnowledgeID;
+ConditionalKnowledge: 'condition' condition=ConditionID 
+	'for' knowledge=KnowledgeID
+;
 
 /*E3 */
-Knowledge: 'knowledge' name=STRING 'description' description=Description 'VisibleCondition' visibleCondition=ConditionID;
+Knowledge: 'knowledge' name=STRING 
+	'description' description=Description 
+	'VisibleCondition' visibleCondition=ConditionID;
 
 
 
 /*E7 E14*/
-Place: 'place' name=STRING 'description' description=Description 'type' type=PlaceType 'canPlaceItem' canPlaceItem=Bool 'paths' paths+=PathID+ ('items' items+=ItemID+)? ('knowledges' knowledges+=KnowledgeID+)? ('NPCs' npcs+=NPCID+)?;
+Place: 'place' name=STRING 
+	'description' description=Description 
+	'type' type=PlaceType 
+	'canPlaceItem' canPlaceItem=Bool 
+	'paths' paths+=PathID+ 
+	('items' items+=ItemID+)? 
+	('knowledges' knowledges+=KnowledgeID+)? 
+	('NPCs' npcs+=NPCID+)?
+;
 
 /*E8 */
 PlaceType: normal = 'normal'
@@ -37,28 +69,60 @@ PlaceType: normal = 'normal'
 ;
 
 /*E9 E10 E11 E16 E20*/
-Path: 'path' name=STRING 'description' description+=Description 'visibleCondition' visibleCondition=Condition 'isOpened' isOpened=Bool 'isObligatory' isObligatory=Bool ('transformabilityConditions' transformabilityCondition=ConditionalItem)? 'extremity1' startingPlace=PlaceID 'extremity2' finishingPlace=PlaceID ('items' items+=ConditionalItem+)? ('knowledges' knowledges+=ConditionalKnowledge+)? ('itemsConsumed' itemsConsumed+=ConditionalItem+)?;
+Path: 'path' name=STRING 
+	'description' description+=Description 
+	'visibleCondition' visibleCondition=Condition 
+	'isOpened' isOpened=Bool 
+	'isObligatory' isObligatory=Bool 
+	'extremity1' startingPlace=PlaceID 
+	'extremity2' finishingPlace=PlaceID 
+	('items' items+=ConditionalItem+)? 
+	('knowledges' knowledges+=ConditionalKnowledge+)? 
+	('itemsConsumed' itemsConsumed+=ConditionalItem+)?
+;
 
 
 /*Type booléen */
-Bool: true = 'true'|false = 'false';
+Bool: true = 'true'
+	| false = 'false'
+;
 
 /*E25 */
-NPC: 'npc' name=STRING 'isObligatory' isObligatory=Bool 'visibleCondition' visibleCondition=ConditionID 'initialChoices' initialChoice+=BeginningChoice+;
+NPC: 'npc' name=STRING 
+	'isObligatory' isObligatory=Bool 
+	'visibleCondition' visibleCondition=ConditionID 
+	'initialChoices' initialChoice+=BeginningChoice+
+;
 
 /*E23 */
-Condition: 'condition' name=STRING 'formula' formula=(NormalDisjunctiveForm | Bool);
+Condition: 'condition' name=STRING 
+	'formula' formula=(NormalDisjunctiveForm | Bool)
+;
 
 /* Description des conditions*/
-Comparator: lt='<' | gt='>' | lte='<=' | gte='>=' | eq='=' | neq='!=';
+Comparator: lt='<' 
+	| gt='>' 
+	| lte='<=' 
+	| gte='>=' 
+	| eq='=' 
+	| neq='!='
+;
+
 Negation: 'not';
 AtomicCondition: Negation? ((item=Item comparateur=Comparator constante=INT )| Knowledge);
+
 Conjunction: conditions += AtomicCondition ('and' conditions += AtomicCondition)*;
+
 NormalDisjunctiveForm: conjunctions += Conjunction ('or' conjunctions += Conjunction)*;
 
 
 /* E30 */
-Choice: 'choice' name=STRING 'condition' condition=ConditionID 'endingCondition' endingCondition=ConditionID 'actions' actions+=ConditionnalAction+ 'suivant' suivant=ChoiceID;
+Choice: 'choice' name=STRING 
+	'condition' condition=ConditionID 
+	'endingCondition' endingCondition=ConditionID 
+	'actions' actions+=ConditionnalAction+ 
+	'suivant' suivant=ChoiceID
+;
 
 BeginningChoice: 'beginning' Choice;
 
@@ -67,12 +131,23 @@ ChoiceType: normal = 'normal'
 	| end = 'end'
 ;
 
-ConditionalChoice: 'condition' condition=ConditionID 'for' Choice=ChoiceID;
+ConditionalChoice: 'condition' condition=ConditionID 
+	'for' Choice=ChoiceID
+;
+
+
 ProposedChoice: {ProposedChoice} ChoiceID | ConditionalChoice;
 
-Action: 'action' name=STRING ('items' items+=ConditionalItem+)? ('knowledges' knowledges+=ConditionalKnowledge+)? ('itemsConsumed' itemsConsumed+=ConditionalItem+)?;
+Action: 'action' name=STRING 
+	('items' items+=ConditionalItem+)? 
+	('knowledges' knowledges+=ConditionalKnowledge+)? 
+	('itemsConsumed' itemsConsumed+=ConditionalItem+)?
+;
 
-ConditionnalAction: 'conditionnalAction' condition=ConditionID ('precedentActions' precedentActions+=ActionCondition+)? 'for' action=ActionID;
+ConditionnalAction: 'conditionnalAction' condition=ConditionID 
+	('precedentActions' precedentActions+=ActionCondition+)? 
+	'for' action=ActionID
+;
 
 
 /*Définition de forme normale disjonctive d'actions, pour les actions proposées */
@@ -90,15 +165,3 @@ PathID: STRING;
 NPCID: STRING;
 ChoiceID: STRING;
 ActionID: STRING;
-
-
-
-
-
-
-
-
-
-
-
-
