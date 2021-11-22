@@ -1,29 +1,22 @@
 grammar fr.n7.PrototypeExplo with org.eclipse.xtext.common.Terminals
 
 generate prototypeExplo "http://www.n7.fr/PrototypeExplo"
-Map: 'map' name=ID 
-	'elements' explorer=Explorer elements+=MapElements+
+Map: 'map' name=STRING
+	'elements' '{' elements += MapElements+ '}'
 ;
 
+MapElements: Explorer | Place | Item | Path | NPC | Choice | Action | Condition | Knowledge;
 
 /*E3 E6*/
 Explorer: 'explorer' name=STRING 
 	'maxSize' maxSize=INT 
-	'items' items+=ConditionalItem* 
-	'knowledges' knowledges+=ConditionalKnowledge*
+	('items' items+=ItemID+)? 
+	('knowledges' knowledges+=Knowledge+)?
 ;
 
-MapElements: Place 
-	| Path
-;
 
-DescribableElements: MapElements 
-	| Knowledge 
-	| Item
-;
 
-Description: description=STRING 
-	| condition=ConditionID description=STRING
+Description: condition=ConditionID description=STRING
 ;
 
 
@@ -35,7 +28,7 @@ ConditionalItem: 'condition' condition=ConditionID
 Item: 'item' name=STRING 
 	'description' description=Description 
 	'size' size=INT 
-	'visible' isVisible=Bool 
+	'visibleCondition' visibleCondition=ConditionID
 	('transformabilityConditions' transformabilityCondition=ConditionalItem)?
 ;
 
@@ -47,7 +40,8 @@ ConditionalKnowledge: 'condition' condition=ConditionID
 /*E3 */
 Knowledge: 'knowledge' name=STRING 
 	'description' description=Description 
-	'VisibleCondition' visibleCondition=ConditionID;
+	'visibleCondition' visibleCondition=ConditionID
+;
 
 
 
@@ -71,9 +65,9 @@ PlaceType: normal = 'normal'
 /*E9 E10 E11 E16 E20*/
 Path: 'path' name=STRING 
 	'description' description+=Description 
-	'visibleCondition' visibleCondition=Condition 
-	'isOpened' isOpened=Bool 
-	'isObligatory' isObligatory=Bool 
+	'visibleCondition' visibleCondition=ConditionID
+	'openedCondition' openedCondition=ConditionID 
+	'obligatoryCondition' obligatoryCondition=ConditionID 
 	'extremity1' startingPlace=PlaceID 
 	'extremity2' finishingPlace=PlaceID 
 	('items' items+=ConditionalItem+)? 
@@ -92,11 +86,11 @@ NPC: 'npc' name=STRING
 	'isObligatory' isObligatory=Bool 
 	'visibleCondition' visibleCondition=ConditionID 
 	'initialChoices' initialChoice+=BeginningChoice+
-;
+	;
 
 /*E23 */
 Condition: 'condition' name=STRING 
-	'formula' formula=(NormalDisjunctiveForm | Bool)
+	'formula' formula=NormalDisjunctiveForm
 ;
 
 /* Description des conditions*/
@@ -109,7 +103,7 @@ Comparator: lt='<'
 ;
 
 Negation: 'not';
-AtomicCondition: Negation? ((item=Item comparateur=Comparator constante=INT )| Knowledge);
+AtomicCondition: Negation? ((item=ItemID comparateur=Comparator constante=INT )| KnowledgeID);
 
 Conjunction: conditions += AtomicCondition ('and' conditions += AtomicCondition)*;
 
@@ -117,26 +111,22 @@ NormalDisjunctiveForm: conjunctions += Conjunction ('or' conjunctions += Conjunc
 
 
 /* E30 */
-Choice: 'choice' name=STRING 
-	'condition' condition=ConditionID 
+Choice: 'choice' name=STRING
+	'text' text = STRING
 	'endingCondition' endingCondition=ConditionID 
-	'actions' actions+=ConditionnalAction+ 
-	'suivant' suivant=ChoiceID
+	'answers' '{' answers+=ConditionnalAnswer* '}'
 ;
 
-BeginningChoice: 'beginning' Choice;
+Answer: 'answer' name=STRING 'action' action=ActionID 'nextChoice' nextChoice += ConditionalChoice+;
 
-ChoiceType: normal = 'normal'
-	| begin = 'begin'
-	| end = 'end'
-;
+BeginningChoice: 'beginning' 'condition' condition=ConditionID 
+	'for' Choice=ChoiceID;
+
 
 ConditionalChoice: 'condition' condition=ConditionID 
 	'for' Choice=ChoiceID
 ;
 
-
-ProposedChoice: {ProposedChoice} ChoiceID | ConditionalChoice;
 
 Action: 'action' name=STRING 
 	('items' items+=ConditionalItem+)? 
@@ -144,24 +134,23 @@ Action: 'action' name=STRING
 	('itemsConsumed' itemsConsumed+=ConditionalItem+)?
 ;
 
-ConditionnalAction: 'conditionnalAction' condition=ConditionID 
+ConditionnalAnswer: 'conditionnalAnswer' condition=ConditionID 
 	('precedentActions' precedentActions+=ActionCondition+)? 
-	'for' action=ActionID
+	'for' answer=Answer
 ;
 
-
-/*Définition de forme normale disjonctive d'actions, pour les actions proposées */
-ActionAtomicCondition: Negation? choice=ChoiceID;
-ActionConjunction: conditions += ActionAtomicCondition ('and' conditions += ActionAtomicCondition)*;
-ActionNormalDisjunctiveForm: conjunctions += ActionConjunction ('or' conjunctions += ActionConjunction)*;
-ActionCondition: ActionNormalDisjunctiveForm;
+ActionCondition: 'condition' condition=ConditionID 
+	'for' action=ActionID
+;
 
 /*En soit inutile, pour se repérer plus facilement */
 ItemID: STRING;
 KnowledgeID: STRING;
-ConditionID: STRING;
+AnswerID : STRING;
+ConditionID: STRING | Bool;
 PlaceID: STRING;
 PathID: STRING;
 NPCID: STRING;
 ChoiceID: STRING;
 ActionID: STRING;
+ExplorerID: STRING;

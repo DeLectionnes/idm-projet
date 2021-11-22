@@ -1,11 +1,20 @@
-#fichiers compilés java
-**.class
-#fichiers eclipse
-.metadata/**
-**/.classpath
-**/.project
-**/build.properties
-**.MF
-**.prefs
-**.mwe2
-**.launch
+*.class
+*.jar
+*.java*
+*.mwe2
+*.xml
+*.properties
+*.txt
+**/.metadata/**
+*.prefs
+*.classpath
+*.project
+*.launch
+*.xtextbin
+*.xtend*
+*.g
+*.tokens
+*.ISetup
+*.MF
+*.ecore
+*.genmodel
