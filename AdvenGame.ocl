@@ -1,0 +1,40 @@
+import 'model/generated/AdvenGame.ecore'
+
+package advenGame
+
+context PathID
+def: getPath() : Path =
+	Map.allInstances() -> asSequence()->first()
+		-> select (path | path.name = self)
+		-> collect(path | path.oclAsType(Path))
+		-> first()
+		
+context NPCID
+def: getNPC() : NPC =
+	Map.allInstances() -> asSequence()->first()
+		-> select (npc | npc.name = self)
+		-> collect(npc | npc.oclAsType(NPC))
+		-> first()
+
+		
+context ItemID
+def: getItem() : Item =
+	Map.allInstances() -> asSequence()->first()
+		-> select (item | item.name = self)
+		-> collect(item | item.oclAsType(Item))
+		-> first()
+
+/* E6 Le nombre d’objets que peut posséder un explorateur est limité par la taille cumulée des objets possédés. */
+context Explorer
+inv maxSizeItem : self.maxSize >= self.items-> iterate(item; sum:Integer = 0 | sum + item.getItem().size)
+
+/* E17 Il ne peut y avoir qu’un seul chemin obligatoire visible et ouvert par lieu. */
+context Place
+inv oneOVOPath : self.paths-> one(path |path.getPath().isObligatory and path.getPath().isVisible and path.getPath().isOpened = true)
+
+/* E26 : Il ne peut y avoir qu’une seule personne obligatoire par lieu. */
+context Place
+inv oneObligatoryNpc : self.NPCs -> one(npc | npc.getNPC().isObligatory = true)
+
+
+endpackage
