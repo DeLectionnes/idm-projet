@@ -1,35 +1,41 @@
 map "Enigme sujet" elements {
 	
-	condition "Énigme réussite" formula "Réussite"
-	condition "Énigme ratée" formula "Tentative" = 0
-	condition "Fin du dialogue du sphinx" formula "Réussite" or "Tentative" = 0
-	condition "Visibilité du Sphinx" formula not "Réussite" or "Tentative" > 0
-
-	explorer "Dora" maxSize 3 items "Tentative" "Tentative" "Tentative"
+	explorer "Dora" 
+		maxSize 3 
+		items { 
+			"Tentative" 
+			"Tentative" 
+			"Tentative" 
+		}
 	
 	place "Énigme" 
 		description true "Là où une question est posée, trois réponses sont données, un pari est pris"
 		type begin
-		canPlaceItem false
-		paths "versSuccès" "versÉchec"
-		NPCs "Sphinx"
+		placeItemCondition false
+		paths {
+			"versSuccès" 
+			"versÉchec"
+		}
+		NPCs { 
+			"Sphinx"
+		}
 	
 	place "Succès"
 		description true "Félicitations pour votre bonne réponse!"
 		type end
-		canPlaceItem false
-		paths "versSuccès"
+		placeItemCondition false
+		paths { "versSuccès" }
 	
 	place "Échec"
-		description true "U suck"
+		description true "Never gonna give you up"
 		type end
-		canPlaceItem false
-		paths "versÉchec"
+		placeItemCondition false
+		paths { "versÉchec" }
 	
 	path "versÉchec"
 		description true "chemin pris en cas de réussite"
 		visibleCondition true
-		openedCondition "Énigme réussite"
+		openedCondition "Réussite"
 		obligatoryCondition true
 		extremity1 "Enigme"
 		extremity2 "Succès"
@@ -37,7 +43,7 @@ map "Enigme sujet" elements {
 	path "versSuccès"
 		description true "chemin pris en cas d'échec"
 		visibleCondition true
-		openedCondition "Énigme ratée"
+		openedCondition "Tentative" = 0
 		obligatoryCondition true
 		extremity1 "Énigme"
 		extremity2 "Échec"
@@ -52,23 +58,54 @@ map "Enigme sujet" elements {
 		visibleCondition false
 		
 	npc "Sphinx"
-		isObligatory true
-		visibleCondition true
-		initialChoices beginning condition true for "Enigme Sphinx"
+		obligatoryCondition true
+		visibleCondition not "Réussite" or "Tentative" > 0
+		initialChoices  { "Enigme Sphinx" with condition true } 
 	
 	choice "Enigme Sphinx"
 		text "J'ai quatre pattes le matin, deux le midi et trois le soir, qui suis-je ?"
-		endingCondition "Fin du dialogue du sphinx"
+		endingCondition "Réussite" or "Tentative" = 0
 		answers { 
-			conditionnalAnswer true precedentActions condition true for "Mauvaise Réponse" for answer "Un homme" action "Bonne Réponse" nextChoice condition true for "Enigme Sphinx"
-			conditionnalAnswer true for answer "La famille d'évolution de Ramolosse" action "Bonne Réponse" nextChoice condition true for "Enigme Sphinx"
-			conditionnalAnswer true for answer "La famille d'évolution de Porygon" action "Bonne Réponse" nextChoice condition true for "Enigme Sphinx"
-			conditionnalAnswer true for answer "Réponse fausse quelconque" action "Mauvaise Réponse" nextChoice condition true for "Enigme Sphinx"
+			
+			answer "Un homme" 
+				action "Bonne Réponse" 
+				nextChoices {
+					"Enigme Sphinx" with condition true
+				} 
+				precedentActions  { 
+					"Mauvaise Réponse" with condition true
+				} 
+				with condition true
+				
+			answer "La famille d'évolution de Ramolosse" 
+				action "Bonne Réponse" 
+				nextChoices {
+					"Enigme Sphinx" with condition true
+				}
+				with condition true
+				
+			answer "La famille d'évolution de Porygon" 
+				action "Bonne Réponse" 
+				nextChoices { 
+					"Enigme Sphinx" with condition true
+				}
+				with condition true
+				
+			answer "Réponse fausse quelconque" 
+				action "Mauvaise Réponse" 
+				nextChoices {
+					"Enigme Sphinx" with condition true
+				}
+				with condition true
 		}
 		
 	action "Bonne Réponse"
-		knowledges condition true for "Réussite"
-	
+		knowledges { 
+			"Réussite" with condition true
+		}
+
 	action "Mauvaise Réponse"
-		itemsConsumed condition true for "Tentative"
+		itemsConsumed {
+			 "Tentative" with condition true
+		}
 }

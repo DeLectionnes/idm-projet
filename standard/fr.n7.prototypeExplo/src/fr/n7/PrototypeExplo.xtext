@@ -1,46 +1,47 @@
 grammar fr.n7.PrototypeExplo with org.eclipse.xtext.common.Terminals
 
 generate prototypeExplo "http://www.n7.fr/PrototypeExplo"
-Map: 'map' name=STRING
+/*La map est */
+MainMap: 'map' name=MapID
 	'elements' '{' elements += MapElements+ '}'
 ;
 
 MapElements: Explorer | Place | Item | Path | NPC | Choice | Action | Condition | Knowledge;
 
 /*E3 E6*/
-Explorer: 'explorer' name=STRING 
+Explorer: 'explorer' name=ExplorerID 
 	'maxSize' maxSize=INT 
-	('items' items+=ItemID+)? 
-	('knowledges' knowledges+=Knowledge+)?
+	& ('items' '{' items+=ItemID+ '}')? 
+	& ('knowledges' '{' knowledges+=Knowledge+ '}')?
 ;
 
 
 
-Description: condition=ConditionID description=STRING
+Description: condition=Condition description=STRING
 ;
 
 
-ConditionalItem: 'condition' condition=ConditionID 
-	'for' item=ItemID
+ConditionalItem: item=ItemID  
+	'with' 'condition' condition=Condition
 ;
 
 /*E5 E40 E41 E42*/
 Item: 'item' name=STRING 
 	'description' description=Description 
-	'size' size=INT 
-	'visibleCondition' visibleCondition=ConditionID
-	('transformabilityConditions' transformabilityCondition=ConditionalItem)?
+	& 'size' size=INT 
+	& 'visibleCondition' visibleCondition=Condition
+	& ('transformabilityConditions' '{' transformabilityCondition=ConditionalItem '}')?
 ;
 
 
-ConditionalKnowledge: 'condition' condition=ConditionID 
-	'for' knowledge=KnowledgeID
+ConditionalKnowledge: knowledge=KnowledgeID
+	'with' 'condition' condition=Condition
 ;
 
 /*E3 */
 Knowledge: 'knowledge' name=STRING 
-	'description' description=Description 
-	'visibleCondition' visibleCondition=ConditionID
+	& 'description' description=Description 
+	& 'visibleCondition' visibleCondition=Condition
 ;
 
 
@@ -48,12 +49,12 @@ Knowledge: 'knowledge' name=STRING
 /*E7 E14*/
 Place: 'place' name=STRING 
 	'description' description=Description 
-	'type' type=PlaceType 
-	'canPlaceItem' canPlaceItem=Bool 
-	'paths' paths+=PathID+ 
-	('items' items+=ItemID+)? 
-	('knowledges' knowledges+=KnowledgeID+)? 
-	('NPCs' npcs+=NPCID+)?
+	& 'type' type=PlaceType 
+	& 'placeItemCondition' placeItemCondition=Condition
+	& 'paths' '{' paths+=PathID+ '}'
+	& ('items' '{' items+=ItemID+ '}')? 
+	& ('knowledges' '{' knowledges+=KnowledgeID+ '}')? 
+	& ('NPCs' '{' npcs+=NPCID+ '}')?
 ;
 
 /*E8 */
@@ -65,14 +66,14 @@ PlaceType: normal = 'normal'
 /*E9 E10 E11 E16 E20*/
 Path: 'path' name=STRING 
 	'description' description+=Description 
-	'visibleCondition' visibleCondition=ConditionID
-	'openedCondition' openedCondition=ConditionID 
-	'obligatoryCondition' obligatoryCondition=ConditionID 
-	'extremity1' startingPlace=PlaceID 
-	'extremity2' finishingPlace=PlaceID 
-	('items' items+=ConditionalItem+)? 
-	('knowledges' knowledges+=ConditionalKnowledge+)? 
-	('itemsConsumed' itemsConsumed+=ConditionalItem+)?
+	& 'visibleCondition' visibleCondition=Condition
+	& 'openedCondition' openedCondition=Condition
+	& 'obligatoryCondition' obligatoryCondition=Condition
+	& 'extremity1' startingPlace=PlaceID 
+	& 'extremity2' finishingPlace=PlaceID 
+	& ('items' '{' items+=ConditionalItem+ '}')? 
+	& ('knowledges' '{' knowledges+=ConditionalKnowledge+ '}')? 
+	& ('itemsConsumed' '{' itemsConsumed+=ConditionalItem+ '}')?
 ;
 
 
@@ -83,14 +84,13 @@ Bool: true = 'true'
 
 /*E25 */
 NPC: 'npc' name=STRING 
-	'isObligatory' isObligatory=Bool 
-	'visibleCondition' visibleCondition=ConditionID 
-	'initialChoices' initialChoice+=BeginningChoice+
-	;
+	'obligatoryCondition'  obligatoryCondition = Condition
+	& 'visibleCondition' visibleCondition=Condition
+	& 'initialChoices' '{' initialChoice+=BeginningChoice+ '}'
+ 	;
 
 /*E23 */
-Condition: 'condition' name=STRING 
-	'formula' formula=NormalDisjunctiveForm
+Condition: NormalDisjunctiveForm | Bool
 ;
 
 /* Description des conditions*/
@@ -103,7 +103,7 @@ Comparator: lt='<'
 ;
 
 Negation: 'not';
-AtomicCondition: Negation? ((item=ItemID comparateur=Comparator constante=INT )| KnowledgeID);
+AtomicCondition: {AtomicCondition} Negation? ((item=ItemID comparateur=Comparator constante=INT )| knowlegde = KnowledgeID);
 
 Conjunction: conditions += AtomicCondition ('and' conditions += AtomicCondition)*;
 
@@ -113,44 +113,46 @@ NormalDisjunctiveForm: conjunctions += Conjunction ('or' conjunctions += Conjunc
 /* E30 */
 Choice: 'choice' name=STRING
 	'text' text = STRING
-	'endingCondition' endingCondition=ConditionID 
-	'answers' '{' answers+=ConditionnalAnswer* '}'
+	& 'endingCondition' endingCondition=Condition
+	& 'answers' '{' answers+=ConditionnalAnswer* '}'
 ;
 
-Answer: 'answer' name=STRING 'action' action=ActionID 'nextChoice' nextChoice += ConditionalChoice+;
+Answer: 'answer' name=STRING 
+	'action' action=ActionID 
+	& 'nextChoices' '{' nextChoice += ConditionalChoice+ '}';
 
-BeginningChoice: 'beginning' 'condition' condition=ConditionID 
-	'for' Choice=ChoiceID;
+BeginningChoice: Choice=ChoiceID 
+	'with' 'condition' condition=Condition
+;
 
 
-ConditionalChoice: 'condition' condition=ConditionID 
-	'for' Choice=ChoiceID
+ConditionalChoice: Choice=ChoiceID
+	'with' 'condition' condition=Condition
 ;
 
 
 Action: 'action' name=STRING 
-	('items' items+=ConditionalItem+)? 
-	('knowledges' knowledges+=ConditionalKnowledge+)? 
-	('itemsConsumed' itemsConsumed+=ConditionalItem+)?
+	('items' '{' items+=ConditionalItem+ '}')? 
+	& ('knowledges' '{' knowledges+=ConditionalKnowledge+ '}')? 
+	& ('itemsConsumed' '{' itemsConsumed+=ConditionalItem+ '}')?
 ;
 
-ConditionnalAnswer: 'conditionnalAnswer' condition=ConditionID 
-	('precedentActions' precedentActions+=ActionCondition+)? 
-	'for' answer=Answer
+ConditionnalAnswer: answer=Answer 
+	('precedentActions' '{' precedentActions+=ActionCondition+ '}')? 
+	& 'with' 'condition' condition = Condition
 ;
 
-ActionCondition: 'condition' condition=ConditionID 
-	'for' action=ActionID
+ActionCondition: action=ActionID
+	'with' 'condition' condition = Condition
 ;
 
 /*En soit inutile, pour se repérer plus facilement */
-ItemID: STRING;
-KnowledgeID: STRING;
-AnswerID : STRING;
-ConditionID: STRING | Bool;
-PlaceID: STRING;
-PathID: STRING;
-NPCID: STRING;
-ChoiceID: STRING;
-ActionID: STRING;
-ExplorerID: STRING;
+MapID: {MapID} STRING;
+ItemID: {ItemID} STRING;
+KnowledgeID: {KnowledgeID} STRING;
+PlaceID: {PlaceID} STRING;
+PathID: {PathID} STRING;
+NPCID: {NPCID} STRING;
+ChoiceID: {ChoiceID} STRING;
+ActionID: {ActionID} STRING;
+ExplorerID: {ExplorerID} STRING;
