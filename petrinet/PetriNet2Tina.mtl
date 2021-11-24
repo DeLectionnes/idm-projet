@@ -1,0 +1,60 @@
+[comment encoding = UTF-8 /]
+[module PetriNet2Tina('http://petriNet')]
+
+
+[template public petriNetToTina(aNetwork : Network)]
+[comment @main/]
+[file (aNetwork.name + '.net', false, 'UTF-8')]
+net [ '{' /][aNetwork.name/][ '}' /]
+[let states : OrderedSet(State) = aNetwork.getStates()]
+	[for (state : State | states)]
+pl [state.name/] ([state.tokens/])
+	[/for]
+[/let]
+[let transitions : OrderedSet(Transition) = aNetwork.getTransitions()]
+[for (transition : Transition | transitions)]
+tr [transition.name/] [ '[' /]0,w[ '[ ' /][comment
+		/][for (connector : Connector | transition.getConnectorPredecessor(aNetwork))][comment
+			/][connector.predecessor.name/][comment
+			/][if connector.oclIsTypeOf(Arc)]*[else]?[/if][comment
+			/][connector.tokens/][ ' ' /][comment
+		/][/for][comment
+		/]-> [for (arc : Arc | transition.getArcSuccessor(aNetwork))][comment
+				/][arc.successor.name/]*[arc.tokens/][ ' ' /][/for]
+
+[/for]
+[/let]
+[/file]
+[/template]
+
+[query public getStates(network: Network) : OrderedSet(State) = 
+	network.networkElements->select( e | e.oclIsTypeOf(State) )
+		->collect( e | e.oclAsType(State))
+		->asOrderedSet()
+/]
+
+[query public getTransitions(network: Network) : OrderedSet(Transition) = 
+	network.networkElements->select( e | e.oclIsTypeOf(Transition) )
+		->collect( e | e.oclAsType(Transition))
+		->asOrderedSet()
+/]
+
+[query public getArcs(network: Network) : OrderedSet(Arc) = 
+	network.networkElements->select( e | e.oclIsTypeOf(Arc) )
+		->collect( e | e.oclAsType(Arc))
+		->asOrderedSet()
+/]
+
+[query public getConnectorPredecessor(transition: Transition, network : Network) : OrderedSet(Connector) = 
+	network.networkElements-> select(connector | connector.oclIsTypeOf(Arc) or connector.oclIsTypeOf(ReadArc))
+		->collect( e | e.oclAsType(Connector))
+		->select(connector | connector.successor = transition)
+		->asOrderedSet()
+/]
+
+[query public getArcSuccessor(transition: Transition, network : Network) : OrderedSet(Arc) = 
+	network.networkElements-> select(arc | arc.oclIsTypeOf(Arc))
+		->collect( e | e.oclAsType(Arc))
+		->select(arc | arc.predecessor = transition)
+		->asOrderedSet()
+/]
