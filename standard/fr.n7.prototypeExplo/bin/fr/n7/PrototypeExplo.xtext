@@ -1,42 +1,39 @@
 grammar fr.n7.PrototypeExplo with org.eclipse.xtext.common.Terminals
 
 generate prototypeExplo "http://www.n7.fr/PrototypeExplo"
-/*La map est */
+/*La map a un nom pour l'identifier dans les OCL*/
 MainMap: 'map' name=MapID
 	'elements' '{' elements += MapElements+ '}'
 ;
-
+/*L'objet MapElements sert à pouvoir énumérer les objets de la carte dans n'importe quel ordre. */
 MapElements: Explorer | Place | Item | Path | NPC | Choice | Action | Condition | Knowledge;
 
 /*E3 E6*/
-Explorer: 'explorer' name=ExplorerID 
-	'maxSize' maxSize=INT 
-	& ('items' '{' items+=ItemID+ '}')? 
-	& ('knowledges' '{' knowledges+=Knowledge+ '}')?
+Explorer: 'explorer' name=ExplorerID /*Dora par défaut*/
+	'maxSize' maxSize=INT /*La constante qui limite la taille cumulée des objets portés */
+	& ('items' '{' items+=ItemID+ '}')? /*Le deux champs optionnels permettent aussi de créer les attributs dans le méta-modèle */
+	& ('knowledges' '{' knowledges+=Knowledge+ '}')? /* */
 ;
 
 
 
-Description: condition=Condition description=STRING
+Description: description=STRING 'with' 'condition' condition = Condition/*La description dépend de condition */
 ;
 
 
-ConditionalItem: item=ItemID  
-	'with' 'condition' condition=Condition
-;
 
-/*E5 E40 E41 E42*/
+
 Item: 'item' name=STRING 
 	'description' description=Description 
 	& 'size' size=INT 
 	& 'visibleCondition' visibleCondition=Condition
-	& ('transformabilityConditions' '{' transformabilityCondition=ConditionalItem '}')?
+	& ('transformabilityConditions' '{' transformabilityCondition=ConditionalItem '}')? /*Si la liste est vide, l'item ne peut pas se transformer. */
 ;
 
-
-ConditionalKnowledge: knowledge=KnowledgeID
+ConditionalItem: item=ItemID  /*J'ai hésité à mettre 'item' au début, mais cet élément est toujours précédé d'un mot clé avec item dedans quand il est appelé ailleurs. */
 	'with' 'condition' condition=Condition
 ;
+
 
 /*E3 */
 Knowledge: 'knowledge' name=STRING 
@@ -44,6 +41,10 @@ Knowledge: 'knowledge' name=STRING
 	& 'visibleCondition' visibleCondition=Condition
 ;
 
+
+ConditionalKnowledge: knowledge=KnowledgeID
+	'with' 'condition' condition=Condition
+;
 
 
 /*E7 E14*/
@@ -57,13 +58,13 @@ Place: 'place' name=STRING
 	& ('NPCs' '{' npcs+=NPCID+ '}')?
 ;
 
-/*E8 */
+/*Cela empèche techniquement un lieu d'être à la fois un début et une fin */
 PlaceType: normal = 'normal'
 	| begin = 'begin'
 	| end = 'end'
 ;
 
-/*E9 E10 E11 E16 E20*/
+/*Il faut orienter les chemins par défaut, car il faut être capable de séparer les deux extrémités.*/
 Path: 'path' name=STRING 
 	'description' description+=Description 
 	& 'visibleCondition' visibleCondition=Condition
@@ -77,7 +78,7 @@ Path: 'path' name=STRING
 ;
 
 
-/*Type booléen */
+/*Type booléen définit car pas présent par défaut*/
 Bool: true = 'true'
 	| false = 'false'
 ;
