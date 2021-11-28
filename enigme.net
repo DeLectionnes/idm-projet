@@ -1,10 +1,10 @@
 net {enigme}
 pl Enigme (1)
-pl Tentatives (3)
-pl Connaissance_Reussite (0)
+pl Tentative (3)
+pl Reussite (0)
 pl Succes (0)
 pl Echec (0)
 pl Reponse_fausse (0)
-tr Mauvaise_reponse [0,w[ Tentatives*1 Enigme?1 -> Reponse_fausse*1 
-tr bonne_reponse [0,w[ Enigme*1 Tentatives*1 -> Succes*1 Connaissance_Reussite*1 
-tr fin_du_jeu [0,w[ Reponse_fausse*3 -> Echec*1 
+tr Mauvaise_reponse [0,w[ Tentative*1 Enigme?1 -> Reponse_fausse*1 
+tr versSucces [0,w[ Enigme*1 Tentatives*1 -> Succes*1 Reussite*1 
+tr versEchec [0,w[ Reponse_fausse*3 -> Echec*1 
