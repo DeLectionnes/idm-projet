@@ -1,0 +1,173 @@
+map "Pallet Town" elements {
+	explorer "Red" 
+		maxSize 20
+		
+/*A useless action to mimick passing from one dialogue to the next. */
+	action "Next dialogue"
+	
+	place "Opening cutscene"
+		description "Thecutscene that launches the game" with condition true
+		type begin
+		placeItemCondition false
+		NPCs {"Intro Prof Oak"}
+		paths {"To the game"}
+	
+	npc "Intro Prof Oak"
+		obligatoryCondition true
+		visibleCondition true
+		initialChoices {"Character name" with condition true}
+	
+	choice "Character name"
+		text "Hello there! Welcome to the world of POKEMON! My name is OAK!
+People call me the POKEMON PROF!
+This world is inhabited by creatures called POKEMON! For some
+people, POKEMON are pets. Others use them for fights. Myself...
+I study POKEMON as a profession.
+First, what is your name?"
+		endingCondition false
+		answers {
+			answer "Red" action "Naming yourself Red" nextChoices {"Rival name, Red" with condition true} with condition true
+			answer "Green" action "Naming yourself Green" nextChoices {"Rival name, Green" with condition true} with condition true
+			answer "Ash" action "Naming yourself Ash" nextChoices {"Rival name, Ash" with condition true} with condition true
+			answer "Satoshi" action "Naming yourself Satoshi" nextChoices {"Rival name, Satoshi" with condition true} with condition true
+			
+		}
+	
+	action "Naming yourself Red" knowledges {"Name Red" with condition true}
+	action "Naming yourself Green" knowledges {"Name Green" with condition true}
+	action "Naming yourself Ash" knowledges {"Name Ash" with condition true}
+	action "Naming yourself Satoshi" knowledges {"Name Satoshi" with condition true}
+	
+	choice "Rival name, Red"
+		text "Right! So your name is Red!"
+		endingCondition false
+		answers {
+			answer "Next" action "Next dialogue" nextChoices {"Rival name" with condition true} with condition true
+		}
+	
+	choice "Rival name, Green"
+		text "Right! So your name is Green!"
+		endingCondition false
+		answers {
+			answer "Next" action "Next dialogue" nextChoices {"Rival name" with condition true} with condition true
+		}
+	
+	choice "Rival name, Ash"
+		text "Right! So your name is Ash!"
+		endingCondition false
+		answers {
+			answer "Next" action "Next dialogue" nextChoices {"Rival name" with condition true} with condition true
+		}
+	
+	choice "Rival name, Satoshi"
+		text "Right! So your name is Satoshi!"
+		endingCondition false
+		answers {
+			answer "Next" action "Next dialogue" nextChoices {"Rival name" with condition true} with condition true
+		}
+
+	choice "Rival name"
+		text "This is my grandson. He's been your rival since you were a baby.
+...Erm, what is his name again?"
+		endingCondition false
+		answers {
+			answer "Blue" action "Naming rival Blue" nextChoices {"End dialogue rival Blue" with condition true} with condition true
+			answer "Gary" action "Naming rival Gary" nextChoices {"End dialogue rival Gary" with condition true} with condition true
+			answer "Shigeru" action "Naming rival Shigeru" nextChoices {"End dialogue rival Shigeru" with condition true} with condition true
+		}
+	
+	action "Naming rival Blue" knowledges {"Rival name Blue" with condition true}
+	action "Naming rival Gary" knowledges {"Rival name Gary" with condition true}
+	action "Naming rival Shigeru" knowledges {"Rival name Shigeru" with condition true}
+	
+	choice "End dialogue rival Blue"
+		text "That's right! I remember now! His name is Blue!"
+		endingCondition false
+		answers {
+			answer "Next" action "Next dialogue" 
+				nextChoices {
+					"End cutscene name Red" with condition "Name Red"
+					"End cutscene name Green" with condition "Name Green"
+					"End cutscene name Ash" with condition "Name Ash"
+					"End cutscene name Satoshi" with condition "Name Satoshi"
+				} with condition true
+		}
+	
+	choice "End dialogue rival Gary"
+		text "That's right! I remember now! His name is Gary!"
+		endingCondition false
+		answers {
+			answer "Next" action "Next dialogue" 
+				nextChoices {
+					"End cutscene name Red" with condition "Name Red"
+					"End cutscene name Green" with condition "Name Green"
+					"End cutscene name Ash" with condition "Name Ash"
+					"End cutscene name Satoshi" with condition "Name Satoshi"
+				} with condition true
+		}
+	
+	choice "End dialogue rival Shigeru"
+		text "That's right! I remember now! His name is Shigeru!"
+		endingCondition false
+		answers {
+			answer "Next" action "Next dialogue" 
+				nextChoices {
+					"End cutscene name Red" with condition "Name Red"
+					"End cutscene name Green" with condition "Name Green"
+					"End cutscene name Ash" with condition "Name Ash"
+					"End cutscene name Satoshi" with condition "Name Satoshi"
+				} with condition true
+		}
+	
+	choice "End cutscene name Red"
+		text "Red! Your very own POKEMON legend is about to unfold! A world of
+dreams and adventures with POKEMON awaits! Let's go!"
+		endingCondition true
+		answers {
+			answer "Repeat" action "Next dialogue" nextChoices { "End cutscene name Red" with condition true } with condition true
+		}
+	
+	choice "End cutscene name Green"
+		text "Green! Your very own POKEMON legend is about to unfold! A world of
+dreams and adventures with POKEMON awaits! Let's go!"
+		endingCondition true
+		answers {
+			answer "Repeat" action "Next dialogue" nextChoices { "End cutscene name Green" with condition true } with condition true
+		}
+		
+	choice "End cutscene name Ash"
+		text "Ash! Your very own POKEMON legend is about to unfold! A world of
+dreams and adventures with POKEMON awaits! Let's go!"
+		endingCondition true
+		answers {
+			answer "Repeat" action "Next dialogue" nextChoices { "End cutscene name Ash" with condition true } with condition true
+		}
+		
+	choice "End cutscene name Satoshi"
+		text "Satoshi! Your very own POKEMON legend is about to unfold! A world of
+dreams and adventures with POKEMON awaits! Let's go!"
+		endingCondition true
+		answers {
+			answer "Repeat" action "Next dialogue" nextChoices { "End cutscene name Satoshi" with condition true } with condition true
+		}
+		
+	path "To the game"
+		description "Your adventure starts now !" with condition true
+		visibleCondition true
+		openedCondition true
+		obligatoryCondition true
+		extremity1 "Opening cutscene"
+		extremity2 "Your room"
+	
+	place "PALLET TOWN"
+		description "Shades of your journey await!" with condition true
+		type normal
+		placeItemCondition false
+		paths {
+			"To your house"
+			"To the rival's house"
+			"To Oak's Laboratory"
+			"To Route 1"
+			"To Sea Route 21"
+		}
+}
