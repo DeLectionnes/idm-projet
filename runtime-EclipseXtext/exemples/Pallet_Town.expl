@@ -37,6 +37,11 @@ First, what is your name?"
 	action "Naming yourself Green" knowledges {"Name Green" with condition true}
 	action "Naming yourself Ash" knowledges {"Name Ash" with condition true}
 	action "Naming yourself Satoshi" knowledges {"Name Satoshi" with condition true}
+
+	knowledge "Name Red" description "Your name is Red" with condition not "Pokemon" "Your name was Red" with condition "Pokemon" visibleCondition true
+	knowledge "Name Green" description "Your name is Green" with condition not "Pokemon" "Your name was Green" with condition "Pokemon" visibleCondition true
+	knowledge "Name Ash" description "Your name is Ash" with condition not "Pokemon" "Your name was Ash" with condition "Pokemon" visibleCondition true
+	knowledge "Name Satoshi" description "Your name is Satoshi" with condition not "Pokemon" "Your name was Satoshi" with condition "Pokemon" visibleCondition true
 	
 	choice "Rival name, Red"
 		text "Right! So your name is Red!"
@@ -79,6 +84,10 @@ First, what is your name?"
 	action "Naming rival Blue" knowledges {"Rival name Blue" with condition true}
 	action "Naming rival Gary" knowledges {"Rival name Gary" with condition true}
 	action "Naming rival Shigeru" knowledges {"Rival name Shigeru" with condition true}
+	
+	knowledge "Naming rival Blue" description "Your rival's name is Blue" with condition true visibleCondition true
+	knowledge "Naming rival Gary" description "Your rival's name is Gary" with condition true visibleCondition true
+	knowledge "Naming rival Shigeru" description "Your rival's name is Shigeru" with condition true visibleCondition true
 	
 	choice "End dialogue rival Blue"
 		text "That's right! I remember now! His name is Blue!"
@@ -158,16 +167,65 @@ dreams and adventures with POKEMON awaits! Let's go!"
 		obligatoryCondition true
 		extremity1 "Opening cutscene"
 		extremity2 "Your room"
-	
-	place "PALLET TOWN"
-		description "Shades of your journey await!" with condition true
+
+	place "Your room"
+		description "Your room, you won't spend much time here." with condition true
 		type normal
-		placeItemCondition false
-		paths {
-			"To your house"
-			"To the rival's house"
-			"To Oak's Laboratory"
-			"To Route 1"
-			"To Sea Route 21"
+		placeItemCondition true
+		paths {"To the ground floor"}
+		NPCs {
+			"SNES" 
+			"Television"
+	}
+	
+	npc "SNES"
+		obligatoryCondition false
+		visibleCondition true
+		initialChoices {
+			"SNES dialogue" with condition true
 		}
-}
+	
+	choice "SNES dialogue"
+		text "Your are playing with the SNES. But it's time to go. The SNES seems sad to see you leave."
+		endingCondition true
+		answers {
+			answer "Repeat" action "Next dialogue" nextChoices { "SNES dialogue" with condition true } with condition true
+		}
+	
+	npc "Television"
+		obligatoryCondition false
+		visibleCondition true
+		initialChoices {
+			"TV dialogue" with condition true
+		}
+	
+	choice "TV dialogue"
+		text "You watch the TV and the TV watches you. Four boys are walking on railroad tracks. They wave at you"
+		endingCondition true
+		answers {
+			answer "Repeat" action "Next dialogue" nextChoices { "SNES dialogue" with condition true } with condition "Aknowledgement" <= 20 
+			answer "Wave back" action "You waved back" 
+				nextChoices {
+					"TV dialogue 2" with condition true
+				} with condition not  "Waved back"
+		}
+	
+	action "You waved back" items {"Aknowledgement" with condition true} knowledges {"Waved back" with condition true} 
+	
+	item "Aknowledgement" 
+		description "You understand that the world around you is scarier than at first look. The world understands you better too." with condition true
+		size 0
+		visibleCondition "Pokemon" or "Aknowlegement" >= 20
+	
+	knowledge "Waved back" description "You waved back at the film's characters." with condition true visibleCondition false
+	
+	choice "TV dialogue 2"
+		text "The boys are happy you waved back at them and seem to ague between them. Finally, one of them takes out his phone and call someone. The film ends."
+		endingCondition true
+		answers {
+			answer "Repeat" action "Next dialogue" nextChoices { "TV dialogue 2" with condition true } with condition true
+		}
+
+}		
+		
+		
