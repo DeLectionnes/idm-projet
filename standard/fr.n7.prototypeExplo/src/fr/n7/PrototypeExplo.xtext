@@ -24,10 +24,10 @@ Description: description=STRING 'with' 'condition' condition = Condition/*La des
 
 
 Item: 'item' name=STRING 
-	'description' description=Description 
+	'description' description+=Description+
 	& 'size' size=INT 
 	& 'visibleCondition' visibleCondition=Condition
-	& ('transformabilityConditions' '{' transformabilityCondition=ConditionalItem '}')? /*Si la liste est vide, l'item ne peut pas se transformer. */
+	& ('transformabilityConditions' '{' transformabilityCondition+=ConditionalItem+ '}')? /*Si la liste est vide, l'item ne peut pas se transformer. */
 ;
 
 ConditionalItem: item=ItemID  /*J'ai hésité à mettre 'item' au début, mais cet élément est toujours précédé d'un mot clé avec item dedans quand il est appelé ailleurs. */
@@ -37,7 +37,7 @@ ConditionalItem: item=ItemID  /*J'ai hésité à mettre 'item' au début, mais c
 
 /*E3 */
 Knowledge: 'knowledge' name=STRING 
-	& 'description' description=Description 
+	& 'description' description+=Description+
 	& 'visibleCondition' visibleCondition=Condition
 ;
 
@@ -49,7 +49,7 @@ ConditionalKnowledge: knowledge=KnowledgeID
 
 /*E7 E14*/
 Place: 'place' name=STRING 
-	'description' description=Description 
+	'description' description+=Description+
 	& 'type' type=PlaceType 
 	& 'placeItemCondition' placeItemCondition=Condition
 	& 'paths' '{' paths+=PathID+ '}'
@@ -66,7 +66,7 @@ PlaceType: normal = 'normal'
 
 /*Il faut orienter les chemins par défaut, car il faut être capable de séparer les deux extrémités.*/
 Path: 'path' name=STRING 
-	'description' description+=Description 
+	'description' description+=Description+
 	& 'visibleCondition' visibleCondition=Condition
 	& 'openedCondition' openedCondition=Condition
 	& 'obligatoryCondition' obligatoryCondition=Condition
@@ -104,11 +104,11 @@ Comparator: lt='<'
 ;
 
 Negation: 'not';
-AtomicCondition: {AtomicCondition} Negation? ((item=ItemID comparateur=Comparator constante=INT )| knowlegde = KnowledgeID);
+AtomicCondition: {AtomicCondition} Negation? ((item=ItemID comparateur=Comparator constante=INT )| knowlegde = KnowledgeID) ;
 
-Conjunction: conditions += AtomicCondition ('and' conditions += AtomicCondition)*;
+Conjunction: {Conjunction} conditions += AtomicCondition ('and' conditions += AtomicCondition)* ;
 
-NormalDisjunctiveForm: conjunctions += Conjunction ('or' conjunctions += Conjunction)*;
+NormalDisjunctiveForm: {NormalDisjunctiveForm} conjunctions += Conjunction ('or' conjunctions += Conjunction)*;
 
 
 /* E30 */
