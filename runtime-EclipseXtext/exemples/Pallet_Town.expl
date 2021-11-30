@@ -225,6 +225,14 @@ dreams and adventures with POKEMON awaits! Let's go!"
 		answers {
 			answer "Repeat" action "Next dialogue" nextChoices { "TV dialogue 2" with condition true } with condition true
 		}
+	
+	path "To the ground floor"
+		description "The stairs that lead down from your room." with condition true
+		visibleCondition true
+		openedCondition true
+		obligatoryCondition false
+		extremity1 "Your room"
+		extremity2 "Your home"
 
 }		
 		
