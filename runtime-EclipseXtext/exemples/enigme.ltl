@@ -1,2 +1,12 @@
 # On peut accéder à l'endroit succès ou échec ce qui implique que l'on peut finir le jeu
-[] <> (Succes \/ Echec)
+op finished = Succes \/ Echec;
+[] (finished => dead);
+[] <> dead ;
+[] (dead => finished);
+- <> finished;
+
+# Vérifier que l'explorateur n'est pas à deux endroits en même temps
+[] (Succes + Echec + Enigme = 1);
+
+# Vérifier que le nombre d'items est inférieur à la taille de l'inventaire en permanence
+[] (Tentative * 1 <= 3);
