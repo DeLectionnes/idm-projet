@@ -103,7 +103,7 @@ NPC: 'npc' name=STRING
 	
 
 NPCAttributes:
-	'obligatoryCondition'  obligatoryCondition = Condition
+	('obligatoryCondition'  obligatoryCondition = Condition)?
 	& 'initialChoices' '{' initialChoice+=BeginningChoice+ '}'
 	& ('visibleCondition' visibleCondition=Condition)?
  	;
