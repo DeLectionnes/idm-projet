@@ -1,15 +1,17 @@
-map "Enigme sujet" elements {
+map "Enigme sujet" {
 	
-	explorer "Dora" 
+	explorer "Dora" {
 		maxSize 3 
 		items { 
 			"Tentative" 
 			"Tentative" 
 			"Tentative" 
 		}
+	}
+		
 	
-	place "Énigme" 
-		description "Là où une question est posée, quatre réponses sont données, un pari est pris" with condition true
+	place "Énigme" {
+		descriptions {"Là où une question est posée, quatre réponses sont données, un pari est pris"}
 		type begin
 		placeItemCondition false
 		paths {
@@ -19,93 +21,98 @@ map "Enigme sujet" elements {
 		NPCs { 
 			"Sphinx"
 		}
+	}
 	
-	place "Succès"
-		description "Vous avez gagné !" with condition true
+	place "Succès"{
+		descriptions { "Vous avez gagné !"}
 		type end
 		placeItemCondition false
 		paths { "versSuccès" }
+	}
 	
-	place "Échec"
-		description "Vous avez perdu... :( " with condition true
+	place "Échec" {
+		descriptions  {"Vous avez perdu... :( "}
 		type end
 		placeItemCondition false
 		paths { "versÉchec" }
+		}
 	
-	path "versÉchec"
-		description "chemin pris en cas de réussite" with condition true
-		visibleCondition true
+	path "versÉchec" {
+		descriptions { "Chemin pris en cas de réussite"}
 		openedCondition "Réussite"
-		obligatoryCondition true
-		extremity1 "Enigme"
-		extremity2 "Succès"
+		to "Succès"
+		}
 		
-	path "versSuccès"
-		description "chemin pris en cas d'échec" with condition true
-		visibleCondition true
+	path "versSuccès" {
+		descriptions { "chemin pris en cas d'échec"}
 		openedCondition "Tentative" = 0
-		obligatoryCondition true
-		extremity1 "Énigme"
-		extremity2 "Échec"
+		to "Échec"
+		}
 	
-	item "Tentative"
-		description "Il est encore possible de répondre" with condition true
+	item "Tentative" {
+		descriptions { "Il est encore possible de répondre" }
 		size 1
 		visibleCondition false
+		}
 	
-	knowledge "Réussite"
-		description "Vous savez que vous avez réussi" with condition true
+	knowledge "Réussite" {
+		descriptions  { "Vous savez que vous avez réussi" }
 		visibleCondition false
+	}
 		
-	npc "Sphinx"
+	npc "Sphinx" {
 		obligatoryCondition true
 		visibleCondition not "Réussite" or "Tentative" > 0
-		initialChoices  { "Enigme Sphinx" with condition true } 
+		initialChoices  { "Enigme Sphinx"} 
+		}
 	
-	choice "Enigme Sphinx"
+	choice "Enigme Sphinx" {
 		text "J'ai quatre pattes le matin, deux le midi et trois le soir, qui suis-je ?"
 		endingCondition "Réussite" or "Tentative" = 0
 		answers { 
 			
-			answer "Un homme" 
+			answer "Un homme" {
 				action "Bonne Réponse" 
 				nextChoices {
-					"Enigme Sphinx" with condition true
-				} 
-				precedentActions  { 
-					"Mauvaise Réponse" with condition true
-				} 
-				with condition true
-				
-			answer "La famille d'évolution de Ramolosse" 
-				action "Bonne Réponse" 
-				nextChoices {
-					"Enigme Sphinx" with condition true
+					"Enigme Sphinx"
 				}
-				with condition true
+				precedentActions  { 
+					"Mauvaise Réponse"
+				}
+			}
+			
+			answer "La famille d'évolution de Ramolosse" {
+				action "Bonne Réponse" 
+				nextChoices {
+					"Enigme Sphinx"
+				}
+			}
 				
-			answer "La famille d'évolution de Porygon" 
+			answer "La famille d'évolution de Porygon" {
 				action "Bonne Réponse" 
 				nextChoices { 
-					"Enigme Sphinx" with condition true
+					"Enigme Sphinx"
 				}
-				with condition true
+			}
 				
-			answer "Réponse fausse quelconque" 
+			answer "Réponse fausse quelconque" {
 				action "Mauvaise Réponse" 
 				nextChoices {
-					"Enigme Sphinx" with condition true
+					"Enigme Sphinx"
 				}
-				with condition true
-		}
+			}
+		}	
+	}
 		
-	action "Bonne Réponse"
+	action "Bonne Réponse" {
 		knowledges { 
-			"Réussite" with condition true
+			"Réussite"
 		}
+	}
 
-	action "Mauvaise Réponse"
+	action "Mauvaise Réponse" {
 		itemsConsumed {
-			 "Tentative" with condition true
-		}
+			 "Tentative"
+		}	
+	}
 }

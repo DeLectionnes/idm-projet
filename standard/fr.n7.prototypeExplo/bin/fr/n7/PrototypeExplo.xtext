@@ -2,60 +2,70 @@ grammar fr.n7.PrototypeExplo with org.eclipse.xtext.common.Terminals
 
 generate prototypeExplo "http://www.n7.fr/PrototypeExplo"
 /*La map a un nom pour l'identifier dans les OCL*/
-MainMap: 'map' name=MapID
-	'elements' '{' elements += MapElements+ '}'
+MainMap: 'map' name=STRING
+	'{' elements += MapElements+ '}'
 ;
 /*L'objet MapElements sert à pouvoir énumérer les objets de la carte dans n'importe quel ordre. */
 MapElements: Explorer | Place | Item | Path | NPC | Choice | Action | Condition | Knowledge;
 
 /*E3 E6*/
-Explorer: 'explorer' name=ExplorerID /*Dora par défaut*/
-	'maxSize' maxSize=INT /*La constante qui limite la taille cumulée des objets portés */
-	& ('items' '{' items+=ItemID+ '}')? /*Le deux champs optionnels permettent aussi de créer les attributs dans le méta-modèle */
-	& ('knowledges' '{' knowledges+=Knowledge+ '}')? /* */
+Explorer: 'explorer' name=STRING /*Dora par défaut*/
+	'{' attributes=ExplorerAttributes '}'
 ;
 
+ExplorerAttributes: 
+	'maxSize' maxSize=INT /*La constante qui limite la taille cumulée des objets portés */
+	& ('items' '{' items+=[Item | STRING]+ '}')? /*Le deux champs optionnels permettent aussi de créer les attributs dans le méta-modèle */
+	& ('knowledges' '{' knowledges+=Knowledge+ '}')? /* */;
 
 
-Description: description=STRING 'with' 'condition' condition = Condition/*La description dépend de condition */
+Description: ( '(' condition=Condition ')')? description=STRING 
 ;
 
 
 
 
 Item: 'item' name=STRING 
-	'description' description+=Description+
+	'{' attributes = ItemAttributes '}'
+;
+
+ItemAttributes:	'descriptions' '{'description+=Description+'}'
 	& 'size' size=INT 
-	& 'visibleCondition' visibleCondition=Condition
+	& ('visibleCondition' visibleCondition=Condition)?
 	& ('transformabilityConditions' '{' transformabilityCondition+=ConditionalItem+ '}')? /*Si la liste est vide, l'item ne peut pas se transformer. */
 ;
 
-ConditionalItem: item=ItemID  /*J'ai hésité à mettre 'item' au début, mais cet élément est toujours précédé d'un mot clé avec item dedans quand il est appelé ailleurs. */
-	'with' 'condition' condition=Condition
+ConditionalItem: ( '(' condition=Condition ')')? item=STRING  /*J'ai hésité à mettre 'item' au début, mais cet élément est toujours précédé d'un mot clé avec item dedans quand il est appelé ailleurs. */
 ;
 
 
 /*E3 */
 Knowledge: 'knowledge' name=STRING 
-	& 'description' description+=Description+
-	& 'visibleCondition' visibleCondition=Condition
+	'{' attributes = KnowledgeAttributes '}'
 ;
 
+KnowledgeAttributes:
+	'descriptions' '{'description+=Description+'}'
+	& ('visibleCondition' visibleCondition=Condition)?
+;
 
-ConditionalKnowledge: knowledge=KnowledgeID
-	'with' 'condition' condition=Condition
+ConditionalKnowledge: ( '(' condition=Condition ')')? knowledge=[Knowledge | STRING]
 ;
 
 
 /*E7 E14*/
 Place: 'place' name=STRING 
-	'description' description+=Description+
+'{' attributes = PlaceAttributes '}'
+;
+
+PlaceAttributes:
+	'descriptions' '{'description+=Description+'}'
 	& 'type' type=PlaceType 
-	& 'placeItemCondition' placeItemCondition=Condition
-	& 'paths' '{' paths+=PathID+ '}'
-	& ('items' '{' items+=ItemID+ '}')? 
-	& ('knowledges' '{' knowledges+=KnowledgeID+ '}')? 
-	& ('NPCs' '{' npcs+=NPCID+ '}')?
+	& 'paths' '{' paths+=[Path|STRING]+ '}'
+	& ('placeItemCondition' placeItemCondition=Condition)?
+	& ('items' '{' items+=[Item | STRING]+ '}')? 
+	& ('knowledges' '{' knowledges+=[Knowledge | STRING]+ '}')? 
+	& ('NPCs' '{' npcs+=[NPC | STRING]+ '}')?
 ;
 
 /*Cela empèche techniquement un lieu d'être à la fois un début et une fin */
@@ -66,12 +76,15 @@ PlaceType: normal = 'normal'
 
 /*Il faut orienter les chemins par défaut, car il faut être capable de séparer les deux extrémités.*/
 Path: 'path' name=STRING 
-	'description' description+=Description+
-	& 'visibleCondition' visibleCondition=Condition
-	& 'openedCondition' openedCondition=Condition
-	& 'obligatoryCondition' obligatoryCondition=Condition
-	& 'extremity1' startingPlace=PlaceID 
-	& 'extremity2' finishingPlace=PlaceID 
+	'{' attributes = PathAttributes '}'
+;
+
+PathAttributes:
+	'descriptions' '{'description+=Description+'}'
+	& 'to' finishingPlace=[Place | STRING]
+	& ('visibleCondition' visibleCondition=Condition)?
+	& ('openedCondition' openedCondition=Condition)?
+	& ('obligatoryCondition' obligatoryCondition=Condition)?
 	& ('items' '{' items+=ConditionalItem+ '}')? 
 	& ('knowledges' '{' knowledges+=ConditionalKnowledge+ '}')? 
 	& ('itemsConsumed' '{' itemsConsumed+=ConditionalItem+ '}')?
@@ -85,13 +98,18 @@ Bool: true = 'true'
 
 /*E25 */
 NPC: 'npc' name=STRING 
+	'{' attributes = NPCAttributes '}'	
+;
+	
+
+NPCAttributes:
 	'obligatoryCondition'  obligatoryCondition = Condition
-	& 'visibleCondition' visibleCondition=Condition
 	& 'initialChoices' '{' initialChoice+=BeginningChoice+ '}'
+	& ('visibleCondition' visibleCondition=Condition)?
  	;
 
 /*E23 */
-Condition: NormalDisjunctiveForm | Bool
+Condition: (NormalDisjunctiveForm | Bool)
 ;
 
 /* Description des conditions*/
@@ -104,7 +122,7 @@ Comparator: lt='<'
 ;
 
 Negation: 'not';
-AtomicCondition: {AtomicCondition} Negation? ((item=ItemID comparateur=Comparator constante=INT )| knowlegde = KnowledgeID) ;
+AtomicCondition: {AtomicCondition} Negation? ((item=[Item|STRING] comparateur=Comparator constante=INT )| knowlegde = [Knowledge|STRING]) ;
 
 Conjunction: {Conjunction} conditions += AtomicCondition ('and' conditions += AtomicCondition)* ;
 
@@ -113,47 +131,42 @@ NormalDisjunctiveForm: {NormalDisjunctiveForm} conjunctions += Conjunction ('or'
 
 /* E30 */
 Choice: 'choice' name=STRING
+	'{' attributes = ChoiceAttributes '}'	
+;
+
+ChoiceAttributes:
 	'text' text = STRING
-	& 'endingCondition' endingCondition=Condition
-	& 'answers' '{' answers+=ConditionnalAnswer* '}'
+	& 'answers' '{' answers+=Answer* '}'
+	& ('endingCondition' endingCondition=Condition)?
 ;
 
-Answer: 'answer' name=STRING 
-	'action' action=ActionID 
-	& 'nextChoices' '{' nextChoice += ConditionalChoice+ '}';
+Answer: ( '('condition=Condition')')? 'answer' name=STRING
+	'{' attributes = AnswerAttributes '}'	
+;
 
-BeginningChoice: Choice=ChoiceID 
-	'with' 'condition' condition=Condition
+AnswerAttributes:
+	'action' action=[Action|STRING]
+	& 'nextChoices' '{' nextChoice += ConditionalChoice+ '}'
+	& ('precedentActions' '{' precedentActions+=ActionCondition+ '}')?
+;
+
+BeginningChoice: ( '(' condition=Condition ')')? choice=[Choice| STRING]
 ;
 
 
-ConditionalChoice: Choice=ChoiceID
-	'with' 'condition' condition=Condition
+ConditionalChoice:( '(' condition=Condition ')')? choice=[Choice| STRING]
 ;
 
 
 Action: 'action' name=STRING 
+	'{' attributes = ActionAttributes '}'
+;
+
+ActionAttributes: 
 	('items' '{' items+=ConditionalItem+ '}')? 
 	& ('knowledges' '{' knowledges+=ConditionalKnowledge+ '}')? 
 	& ('itemsConsumed' '{' itemsConsumed+=ConditionalItem+ '}')?
 ;
 
-ConditionnalAnswer: answer=Answer 
-	('precedentActions' '{' precedentActions+=ActionCondition+ '}')? 
-	& 'with' 'condition' condition = Condition
+ActionCondition: ( '(' condition=Condition ')')?action=[Action|STRING]
 ;
-
-ActionCondition: action=ActionID
-	'with' 'condition' condition = Condition
-;
-
-/*En soit inutile, pour se repérer plus facilement */
-MapID: {MapID} STRING;
-ItemID: {ItemID} STRING;
-KnowledgeID: {KnowledgeID} STRING;
-PlaceID: {PlaceID} STRING;
-PathID: {PathID} STRING;
-NPCID: {NPCID} STRING;
-ChoiceID: {ChoiceID} STRING;
-ActionID: {ActionID} STRING;
-ExplorerID: {ExplorerID} STRING;
