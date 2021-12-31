@@ -1,23 +1,26 @@
-map "Pallet Town" elements {
-	explorer "Red" 
+map "Pallet Town" {
+	explorer "Red" {
 		maxSize 20
+	}
 		
 /*A useless action to mimick passing from one dialogue to the next. */
-	action "Next dialogue"
+	action "Next dialogue" {}
 	
-	place "Opening cutscene"
-		description "Thecutscene that launches the game" with condition true
+	knowledge "Pokemon" { descriptions {"You are a Pokémon"}}
+	
+	place "Opening cutscene" {
+		descriptions {"The cutscene that launches the game"}
 		type begin
 		placeItemCondition false
 		NPCs {"Intro Prof Oak"}
 		paths {"To the game"}
+	}
 	
-	npc "Intro Prof Oak"
-		obligatoryCondition true
-		visibleCondition true
-		initialChoices {"Character name" with condition true}
+	npc "Intro Prof Oak" {
+		initialChoices {"Character name"}
+	}
 	
-	choice "Character name"
+	choice "Character name" {
 		text "Hello there! Welcome to the world of POKEMON! My name is OAK!
 People call me the POKEMON PROF!
 This world is inhabited by creatures called POKEMON! For some
@@ -26,213 +29,297 @@ I study POKEMON as a profession.
 First, what is your name?"
 		endingCondition false
 		answers {
-			answer "Red" action "Naming yourself Red" nextChoices {"Rival name, Red" with condition true} with condition true
-			answer "Green" action "Naming yourself Green" nextChoices {"Rival name, Green" with condition true} with condition true
-			answer "Ash" action "Naming yourself Ash" nextChoices {"Rival name, Ash" with condition true} with condition true
-			answer "Satoshi" action "Naming yourself Satoshi" nextChoices {"Rival name, Satoshi" with condition true} with condition true
+			answer "Red" {action "Naming yourself Red" nextChoices {"Rival name, Red"}}
+			answer "Green" {action "Naming yourself Green" nextChoices {"Rival name, Green"}} 
+			answer "Ash" {action "Naming yourself Ash" nextChoices {"Rival name, Ash"}}
+			answer "Satoshi" {action "Naming yourself Satoshi" nextChoices {"Rival name, Satoshi"}}
 			
 		}
+		
+	}
 	
-	action "Naming yourself Red" knowledges {"Name Red" with condition true}
-	action "Naming yourself Green" knowledges {"Name Green" with condition true}
-	action "Naming yourself Ash" knowledges {"Name Ash" with condition true}
-	action "Naming yourself Satoshi" knowledges {"Name Satoshi" with condition true}
+	action "Naming yourself Red" {knowledges {"Name Red"}}
+	action "Naming yourself Green" {knowledges {"Name Green"}}
+	action "Naming yourself Ash" {knowledges {"Name Ash"}}
+	action "Naming yourself Satoshi" {knowledges {"Name Satoshi"}}
 
-	knowledge "Name Red" description "Your name is Red" with condition not "Pokemon" "Your name was Red" with condition "Pokemon" visibleCondition true
-	knowledge "Name Green" description "Your name is Green" with condition not "Pokemon" "Your name was Green" with condition "Pokemon" visibleCondition true
-	knowledge "Name Ash" description "Your name is Ash" with condition not "Pokemon" "Your name was Ash" with condition "Pokemon" visibleCondition true
-	knowledge "Name Satoshi" description "Your name is Satoshi" with condition not "Pokemon" "Your name was Satoshi" with condition "Pokemon" visibleCondition true
+	knowledge "Name Red" {descriptions {(not "Pokemon") "Your name is Red" ("Pokemon") "Your name was Red"}}
+	knowledge "Name Green" {descriptions {(not "Pokemon") "Your name is Green" ("Pokemon") "Your name was Green"}}
+	knowledge "Name Ash" {descriptions {(not "Pokemon") "Your name is Ash" ("Pokemon") "Your name was Ash"}}
+	knowledge "Name Satoshi" {descriptions {(not "Pokemon") "Your name is Satoshi" ("Pokemon") "Your name was Satoshi"}}
 	
-	choice "Rival name, Red"
+	choice "Rival name, Red" {
 		text "Right! So your name is Red!"
 		endingCondition false
 		answers {
-			answer "Next" action "Next dialogue" nextChoices {"Rival name" with condition true} with condition true
+			answer "Next" {action "Next dialogue" nextChoices {"Rival name"}}
 		}
+	}
 	
-	choice "Rival name, Green"
+	choice "Rival name, Green" {
 		text "Right! So your name is Green!"
 		endingCondition false
 		answers {
-			answer "Next" action "Next dialogue" nextChoices {"Rival name" with condition true} with condition true
+			answer "Next" {action "Next dialogue" nextChoices {"Rival name"}}
 		}
+	}
 	
-	choice "Rival name, Ash"
+	choice "Rival name, Ash" {
 		text "Right! So your name is Ash!"
 		endingCondition false
 		answers {
-			answer "Next" action "Next dialogue" nextChoices {"Rival name" with condition true} with condition true
+			answer "Next" {action "Next dialogue" nextChoices {"Rival name"}}
+		}
 		}
 	
-	choice "Rival name, Satoshi"
+	choice "Rival name, Satoshi" {
 		text "Right! So your name is Satoshi!"
 		endingCondition false
 		answers {
-			answer "Next" action "Next dialogue" nextChoices {"Rival name" with condition true} with condition true
+			answer "Next" {action "Next dialogue" nextChoices {"Rival name"}}
 		}
+	}
 
-	choice "Rival name"
+	choice "Rival name" {
 		text "This is my grandson. He's been your rival since you were a baby.
 ...Erm, what is his name again?"
 		endingCondition false
 		answers {
-			answer "Blue" action "Naming rival Blue" nextChoices {"End dialogue rival Blue" with condition true} with condition true
-			answer "Gary" action "Naming rival Gary" nextChoices {"End dialogue rival Gary" with condition true} with condition true
-			answer "Shigeru" action "Naming rival Shigeru" nextChoices {"End dialogue rival Shigeru" with condition true} with condition true
+			answer "Blue" {action "Naming rival Blue" nextChoices {"End dialogue rival Blue"}}
+			answer "Gary" {action "Naming rival Gary" nextChoices {"End dialogue rival Gary"}}
+			answer "Shigeru" {action "Naming rival Shigeru" nextChoices {"End dialogue rival Shigeru"}}
 		}
+	}
 	
-	action "Naming rival Blue" knowledges {"Rival name Blue" with condition true}
-	action "Naming rival Gary" knowledges {"Rival name Gary" with condition true}
-	action "Naming rival Shigeru" knowledges {"Rival name Shigeru" with condition true}
+	action "Naming rival Blue" {knowledges {"Rival name Blue"}}
+	action "Naming rival Gary" {knowledges {"Rival name Gary"}}
+	action "Naming rival Shigeru" {knowledges {"Rival name Shigeru"}}
 	
-	knowledge "Naming rival Blue" description "Your rival's name is Blue" with condition true visibleCondition true
-	knowledge "Naming rival Gary" description "Your rival's name is Gary" with condition true visibleCondition true
-	knowledge "Naming rival Shigeru" description "Your rival's name is Shigeru" with condition true visibleCondition true
+	knowledge "Rival name Blue" {descriptions {"Your rival's name is Blue"}}
+	knowledge "Rival name Gary" {descriptions {"Your rival's name is Gary"}}
+	knowledge "Rival name Shigeru" {descriptions {"Your rival's name is Shigeru"}}
 	
-	choice "End dialogue rival Blue"
+	choice "End dialogue rival Blue" {
 		text "That's right! I remember now! His name is Blue!"
 		endingCondition false
 		answers {
-			answer "Next" action "Next dialogue" 
+			answer "Next" {action "Next dialogue" 
 				nextChoices {
-					"End cutscene name Red" with condition "Name Red"
-					"End cutscene name Green" with condition "Name Green"
-					"End cutscene name Ash" with condition "Name Ash"
-					"End cutscene name Satoshi" with condition "Name Satoshi"
-				} with condition true
+					("Name Red") "End cutscene name Red" 
+					("Name Green") "End cutscene name Green"
+					("Name Ash") "End cutscene name Ash" 
+					("Name Satoshi") "End cutscene name Satoshi"
+				}
+			}
 		}
+	}
 	
-	choice "End dialogue rival Gary"
+	choice "End dialogue rival Gary" {
 		text "That's right! I remember now! His name is Gary!"
 		endingCondition false
 		answers {
-			answer "Next" action "Next dialogue" 
+			answer "Next" {
+				action "Next dialogue" 
 				nextChoices {
-					"End cutscene name Red" with condition "Name Red"
-					"End cutscene name Green" with condition "Name Green"
-					"End cutscene name Ash" with condition "Name Ash"
-					"End cutscene name Satoshi" with condition "Name Satoshi"
-				} with condition true
+					("Name Red") "End cutscene name Red"
+					("Name Green") "End cutscene name Green"
+					("Name Ash") "End cutscene name Ash"
+					("Name Satoshi") "End cutscene name Satoshi" 
+				}
+			}
 		}
+	}
 	
-	choice "End dialogue rival Shigeru"
+	choice "End dialogue rival Shigeru" {
 		text "That's right! I remember now! His name is Shigeru!"
 		endingCondition false
 		answers {
-			answer "Next" action "Next dialogue" 
+			answer "Next" { 
+				action "Next dialogue" 
 				nextChoices {
-					"End cutscene name Red" with condition "Name Red"
-					"End cutscene name Green" with condition "Name Green"
-					"End cutscene name Ash" with condition "Name Ash"
-					"End cutscene name Satoshi" with condition "Name Satoshi"
-				} with condition true
+					("Name Red") "End cutscene name Red"
+					("Name Green") "End cutscene name Green" 
+					("Name Ash") "End cutscene name Ash"
+					("Name Satoshi") "End cutscene name Satoshi" 
+				}
+			}
 		}
-	
-	choice "End cutscene name Red"
-		text "Red! Your very own POKEMON legend is about to unfold! A world of
-dreams and adventures with POKEMON awaits! Let's go!"
-		endingCondition true
-		answers {
-			answer "Repeat" action "Next dialogue" nextChoices { "End cutscene name Red" with condition true } with condition true
-		}
-	
-	choice "End cutscene name Green"
-		text "Green! Your very own POKEMON legend is about to unfold! A world of
-dreams and adventures with POKEMON awaits! Let's go!"
-		endingCondition true
-		answers {
-			answer "Repeat" action "Next dialogue" nextChoices { "End cutscene name Green" with condition true } with condition true
-		}
-		
-	choice "End cutscene name Ash"
-		text "Ash! Your very own POKEMON legend is about to unfold! A world of
-dreams and adventures with POKEMON awaits! Let's go!"
-		endingCondition true
-		answers {
-			answer "Repeat" action "Next dialogue" nextChoices { "End cutscene name Ash" with condition true } with condition true
-		}
-		
-	choice "End cutscene name Satoshi"
-		text "Satoshi! Your very own POKEMON legend is about to unfold! A world of
-dreams and adventures with POKEMON awaits! Let's go!"
-		endingCondition true
-		answers {
-			answer "Repeat" action "Next dialogue" nextChoices { "End cutscene name Satoshi" with condition true } with condition true
-		}
-		
-	path "To the game"
-		description "Your adventure starts now !" with condition true
-		visibleCondition true
-		openedCondition true
-		obligatoryCondition true
-		extremity1 "Opening cutscene"
-		extremity2 "Your room"
-
-	place "Your room"
-		description "Your room, you won't spend much time here." with condition true
-		type normal
-		placeItemCondition true
-		paths {"To the ground floor"}
-		NPCs {
-			"SNES" 
-			"Television"
 	}
 	
-	npc "SNES"
-		obligatoryCondition false
-		visibleCondition true
-		initialChoices {
-			"SNES dialogue" with condition true
+	choice "End cutscene name Red" {
+		text "Red! Your very own POKEMON legend is about to unfold! A world of
+dreams and adventures with POKEMON awaits! Let's go!"
+		answers {
+			answer "Repeat" {action "Next dialogue" nextChoices { "End cutscene name Red"}}
 		}
+	}
 	
-	choice "SNES dialogue"
+	choice "End cutscene name Green" {
+		text "Green! Your very own POKEMON legend is about to unfold! A world of
+dreams and adventures with POKEMON awaits! Let's go!"
+		answers {
+			answer "Repeat" {action "Next dialogue" nextChoices { "End cutscene name Green"}} 
+		}
+	}
+		
+	choice "End cutscene name Ash" {
+		text "Ash! Your very own POKEMON legend is about to unfold! A world of
+dreams and adventures with POKEMON awaits! Let's go!"
+		answers {
+			answer "Repeat" {action "Next dialogue" nextChoices { "End cutscene name Ash"}}
+		}
+	}
+		
+	choice "End cutscene name Satoshi" {
+		text "Satoshi! Your very own POKEMON legend is about to unfold! A world of
+dreams and adventures with POKEMON awaits! Let's go!"
+		answers {
+			answer "Repeat" {action "Next dialogue" nextChoices { "End cutscene name Satoshi"}}
+		}
+	}
+		
+	path "To the game"{
+		descriptions {"Your adventure starts now !"}
+		to "Your room"
+	}
+
+	place "Your room"{
+		descriptions {"Your room, you won't spend much time here."}
+		type normal
+		paths {"To the ground floor"}
+		NPCs {
+			"SNES"
+		}
+	}
+	
+	npc "SNES" {
+		obligatoryCondition false
+		initialChoices {
+			"SNES dialogue"
+		}
+	}
+	
+	choice "SNES dialogue" {
 		text "Your are playing with the SNES. But it's time to go. The SNES seems sad to see you leave."
-		endingCondition true
 		answers {
-			answer "Repeat" action "Next dialogue" nextChoices { "SNES dialogue" with condition true } with condition true
+			answer "Repeat" {action "Next dialogue" nextChoices { "SNES dialogue"}}
 		}
+	}
 	
-	npc "Television"
+	
+	
+	path "To the ground floor" {
+		descriptions {"The stairs that lead down from your room."}
 		obligatoryCondition false
-		visibleCondition true
+		to "Your home"
+	}
+	
+	place "Your home" {
+		descriptions {(not "Pokemon") "Your live here now. You hope it will soon comfy." ("Pokemon") "Your former home... you shouldn't have come here."}
+		type normal
+		paths {
+			"To your room"
+			"To Pallet Town"
+		}
+		NPCs {
+			"Mom"
+			"TV"
+		}	
+	}
+	
+	path "To your room" {
+		descriptions {"The stairs that lead up to your room."}
+		to "Your room"
+		obligatoryCondition false
+	}
+	
+	npc "TV" {
+		obligatoryCondition false
 		initialChoices {
-			"TV dialogue" with condition true
+			"Film dialogue"
 		}
+	}
 	
-	choice "TV dialogue"
+	choice "Film dialogue" {
 		text "You watch the TV and the TV watches you. Four boys are walking on railroad tracks. They wave at you"
-		endingCondition true
 		answers {
-			answer "Repeat" action "Next dialogue" nextChoices { "SNES dialogue" with condition true } with condition "Aknowledgement" <= 20 
-			answer "Wave back" action "You waved back" 
-				nextChoices {
-					"TV dialogue 2" with condition true
-				} with condition not  "Waved back"
+			("Aknowledgement" <= 20 ) answer "Repeat" {action "Next dialogue" nextChoices { "SNES dialogue"}}
+			(not "Waved back") answer "Wave back" {action "You waved back" nextChoices {"Film dialogue 2"}}
 		}
+	}
 	
-	action "You waved back" items {"Aknowledgement" with condition true} knowledges {"Waved back" with condition true} 
+	action "You waved back" {items {"Aknowledgement"} knowledges {"Waved back"}}
 	
-	item "Aknowledgement" 
-		description "You understand that the world around you is scarier than at first look. The world understands you better too." with condition true
+	item "Aknowledgement" {
+		descriptions {"You understand that the world around you is scarier than at first look. The world understands you better too."}
 		size 0
-		visibleCondition "Pokemon" or "Aknowlegement" >= 20
+		visibleCondition "Pokemon" or "Aknowledgement" >= 20
+	}
 	
-	knowledge "Waved back" description "You waved back at the film's characters." with condition true visibleCondition false
+	knowledge "Waved back" { descriptions {"You waved back at the film's characters."} visibleCondition false }
 	
-	choice "TV dialogue 2"
+	choice "Film dialogue 2"{
 		text "The boys are happy you waved back at them and seem to ague between them. Finally, one of them takes out his phone and call someone. The film ends."
-		endingCondition true
 		answers {
-			answer "Repeat" action "Next dialogue" nextChoices { "TV dialogue 2" with condition true } with condition true
+			answer "Repeat" {action "Next dialogue" nextChoices { "Film dialogue 2" }}
 		}
+	}
 	
-	path "To the ground floor"
-		description "The stairs that lead down from your room." with condition true
-		visibleCondition true
-		openedCondition true
+	npc "Mom" {
 		obligatoryCondition false
-		extremity1 "Your room"
-		extremity2 "Your home"
+		initialChoices {
+			"Mom dialogue"
+		}
+	}
+	
+	choice "Mom dialogue" {
+		text "Right. All boys leave home some day. That's what the TV film means I think.
+PROF.OAK, talked about you. It's dangerous to go alone ! You should have a pokemon with you before going out."
+		answers {
+			(not "Pokemon" and "Aknowledgement" < 2)answer "Next" {action "Next dialogue Mom2" nextChoices { "Mom dialogue2"}}
+			answer "Next" {action "Next dialogue" nextChoices { "Mom dialogue3"}}
+		}
+	}
+	
+	action "Next dialogue Mom2" { items {"Aknowledgement"}}
+	
+	choice "Mom dialogue2" {
+		text "Pokemons are also free to go out, but I don't think you want that, do you ?"
+		answers {
+			answer "Next" {action "Next dialogue" nextChoices { "Mom dialogue"}}
+		}
+	}
+	
+	choice "Mom dialogue3" {
+		text "However, you are already a Pokemon ! This time I will make an exception and open the front door!"
+		answers {
+			answer "Repeat" {action "Next dialogue Mom3" nextChoices { "Mom dialogue"}}
+		}
+	}
+	
+	action "Next dialogue Mom3" {knowledges {"Front door open"}}
+	
+	knowledge "Front door open" {
+		visibleCondition false
+		descriptions { "Mom opened the front door"}
+	}
+	
+	path "To Pallet Town" {
+		to "Your room"
+		obligatoryCondition false
+		openedCondition "Front door open" or "Key" > 0
+		descriptions {
+			(not "Punished" and not "Front door open" and "Key" = 0) "The door that leads outside to Pallet Town. Mom locked it."
+			("Front door open") "The door that leads outside to Pallet Town. Mom unlocked it."
+			("Key" > 0) "The door that leads outside to Pallet Town. You can unlock it."
+			("Punished") "To the hell you brought to yourself."
+		
+		}
+	}
+	
+	knowledge "Punished" { descriptions {"You were punished by Mom. Bad boy."}}
+	
+	item "Key" { descriptions {"The key of your front door."} size 0}
 
 }		
 		

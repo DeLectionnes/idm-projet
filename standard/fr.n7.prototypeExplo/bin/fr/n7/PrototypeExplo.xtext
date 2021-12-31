@@ -104,7 +104,7 @@ NPC: 'npc' name=STRING
 
 NPCAttributes:
 	('obligatoryCondition'  obligatoryCondition = Condition)?
-	& 'initialChoices' '{' initialChoice+=BeginningChoice+ '}'
+	& 'initialChoices' '{' initialChoice+=ConditionalChoice+ '}'
 	& ('visibleCondition' visibleCondition=Condition)?
  	;
 
@@ -147,12 +147,8 @@ Answer: ( '('condition=Condition')')? 'answer' name=STRING
 AnswerAttributes:
 	'action' action=[Action|STRING]
 	& 'nextChoices' '{' nextChoice += ConditionalChoice+ '}'
-	& ('precedentActions' '{' precedentActions+=ActionCondition+ '}')?
+	& ('precedentActions' '{' precedentActions+=ConditionnalAction+ '}')?
 ;
-
-BeginningChoice: ( '(' condition=Condition ')')? choice=[Choice| STRING]
-;
-
 
 ConditionalChoice:( '(' condition=Condition ')')? choice=[Choice| STRING]
 ;
@@ -168,5 +164,5 @@ ActionAttributes:
 	& ('itemsConsumed' '{' itemsConsumed+=ConditionalItem+ '}')?
 ;
 
-ActionCondition: ( '(' condition=Condition ')')?action=[Action|STRING]
+ConditionnalAction: ( '(' condition=Condition ')')?action=[Action|STRING]
 ;
