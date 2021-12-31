@@ -297,7 +297,7 @@ PROF.OAK, talked about you. It's dangerous to go alone ! You should have a pokem
 		}
 	}
 	
-	action "Next dialogue Mom3" {knowledges {"Front door open"}}
+	action "Next dialogue Mom3" {knowledges {"Front door open" "Punished"}}
 	
 	knowledge "Front door open" {
 		visibleCondition false
@@ -305,7 +305,7 @@ PROF.OAK, talked about you. It's dangerous to go alone ! You should have a pokem
 	}
 	
 	path "To Pallet Town" {
-		to "Your room"
+		to "The end"
 		obligatoryCondition false
 		openedCondition "Front door open" or "Key" > 0
 		descriptions {
@@ -320,6 +320,18 @@ PROF.OAK, talked about you. It's dangerous to go alone ! You should have a pokem
 	knowledge "Punished" { descriptions {"You were punished by Mom. Bad boy."}}
 	
 	item "Key" { descriptions {"The key of your front door."} size 0}
+	
+	place "The end" {
+		type end
+		descriptions {"The end of the test"}
+		paths {"To the beginning"}
+		
+	}
+	
+	path "To the beginning" {
+		descriptions {"To the beginning of the game"}
+		to 'Your room'
+	}
 
 }		
 		
