@@ -3,9 +3,7 @@ map "Enigme sujet" {
 	explorer "Dora" {
 		maxSize 3 
 		items { 
-			"Tentative" 
-			"Tentative" 
-			"Tentative" 
+			"Tentative" "Tentative" "Tentative" 
 		}
 	}
 		

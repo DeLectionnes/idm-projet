@@ -35,7 +35,7 @@ ItemAttributes:	'descriptions' '{'description+=Description+'}'
 	& ('transformabilityConditions' '{' transformabilityCondition+=ConditionalItem+ '}')? /*Si la liste est vide, l'item ne peut pas se transformer. */
 ;
 
-ConditionalItem: ( '(' condition=Condition ')')? item=STRING  /*J'ai hésité à mettre 'item' au début, mais cet élément est toujours précédé d'un mot clé avec item dedans quand il est appelé ailleurs. */
+ConditionalItem: ( '(' condition=Condition ')')? item=[Item|STRING]  /*J'ai hésité à mettre 'item' au début, mais cet élément est toujours précédé d'un mot clé avec item dedans quand il est appelé ailleurs. */
 ;
 
 
@@ -122,7 +122,7 @@ Comparator: lt='<'
 ;
 
 Negation: 'not';
-AtomicCondition: {AtomicCondition} Negation? ((item=[Item|STRING] comparateur=Comparator constante=INT )| knowlegde = [Knowledge|STRING]) ;
+AtomicCondition: {AtomicCondition} (negation = Negation)? ((item=[Item|STRING] comparateur=Comparator constante=INT )| knowlegde = [Knowledge|STRING]) ;
 
 Conjunction: {Conjunction} conditions += AtomicCondition ('and' conditions += AtomicCondition)* ;
 
