@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="prototypeExplo" nsURI="http://www.n7.fr/PrototypeExplo" nsPrefix="prototypeExplo">
+  <eClassifiers xsi:type="ecore:EClass" name="MainMap">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
+        eType="#//MapElements" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MapElements"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Explorer" eSuperTypes="#//MapElements">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//ExplorerAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExplorerAttributes">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="items" unique="false" upperBound="-1"
+        eType="#//Item"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledges" upperBound="-1"
+        eType="#//Knowledge" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Description">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="condition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//MapElements">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//ItemAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ItemAttributes">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="description" upperBound="-1"
+        eType="#//Description" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="visibleCondition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transformabilityCondition"
+        upperBound="-1" eType="#//ConditionalItem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConditionalItem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="condition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="item" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Knowledge" eSuperTypes="#//MapElements">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//KnowledgeAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KnowledgeAttributes">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="description" upperBound="-1"
+        eType="#//Description" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="visibleCondition" eType="#//Condition"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConditionalKnowledge">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="condition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledge" eType="#//Knowledge"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Place" eSuperTypes="#//MapElements">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//PlaceAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PlaceAttributes">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="description" upperBound="-1"
+        eType="#//Description" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//PlaceType"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" unique="false" upperBound="-1"
+        eType="#//Path"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="placeItemCondition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="items" unique="false" upperBound="-1"
+        eType="#//Item"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledges" unique="false"
+        upperBound="-1" eType="#//Knowledge"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="npcs" unique="false" upperBound="-1"
+        eType="#//NPC"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PlaceType">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="normal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="begin" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="end" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Path" eSuperTypes="#//MapElements">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//PathAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PathAttributes">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="description" upperBound="-1"
+        eType="#//Description" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="finishingPlace" eType="#//Place"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="visibleCondition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="openedCondition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="obligatoryCondition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1"
+        eType="#//ConditionalItem" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledges" upperBound="-1"
+        eType="#//ConditionalKnowledge" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="itemsConsumed" upperBound="-1"
+        eType="#//ConditionalItem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Bool" eSuperTypes="#//Condition">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="true" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NPC" eSuperTypes="#//MapElements">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//NPCAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NPCAttributes">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="obligatoryCondition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="initialChoice" upperBound="-1"
+        eType="#//ConditionalChoice" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="visibleCondition" eType="#//Condition"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Condition" eSuperTypes="#//MapElements"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Comparator">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lte" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gte" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="eq" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="neq" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AtomicCondition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="item" eType="#//Item"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="comparateur" eType="#//Comparator"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="constante" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowlegde" eType="#//Knowledge"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Conjunction">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conditions" upperBound="-1"
+        eType="#//AtomicCondition" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NormalDisjunctiveForm" eSuperTypes="#//Condition">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conjunctions" upperBound="-1"
+        eType="#//Conjunction" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Choice" eSuperTypes="#//MapElements">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//ChoiceAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ChoiceAttributes">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="answers" upperBound="-1"
+        eType="#//Answer" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="endingCondition" eType="#//Condition"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Answer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="condition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//AnswerAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AnswerAttributes">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//Action"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nextChoice" upperBound="-1"
+        eType="#//ConditionalChoice" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="precedentActions" upperBound="-1"
+        eType="#//ConditionnalAction" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConditionalChoice">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="condition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="choice" eType="#//Choice"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Action" eSuperTypes="#//MapElements">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" eType="#//ActionAttributes"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ActionAttributes">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1"
+        eType="#//ConditionalItem" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knowledges" upperBound="-1"
+        eType="#//ConditionalKnowledge" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="itemsConsumed" upperBound="-1"
+        eType="#//ConditionalItem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConditionnalAction">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="condition" eType="#//Condition"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//Action"/>
+  </eClassifiers>
+</ecore:EPackage>
