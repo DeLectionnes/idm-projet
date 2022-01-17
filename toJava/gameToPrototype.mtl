@@ -1,0 +1,689 @@
+[comment encoding = UTF-8 /]
+[module toPrototype('http://prototypeExplo')]
+
+[template public MainMaptoPrototype(aMap : MainMap)]
+
+[let explorer : Explorer = aMap.getExplorer()]
+
+[let places : OrderedSet(Place) = aMap.getPlaces()]
+[let paths : OrderedSet(Path) = aMap.getPaths()]
+[let npcs : OrderedSet(NPC) = aMap.getNPCs()]
+[let items : OrderedSet(Item) = aMap.getItems()]
+[let choices : OrderedSet(Choice) = aMap.getChoices()]
+[let actions : OrderedSet(Action) = aMap.getActions()]
+[let conditions : OrderedSet(Condition) = aMap.getConditions()]
+[let knowledges : OrderedSet(Knowledge) = aMap.getKnowledges()]
+
+
+[file ("main" + aMap.name + ".java", false, 'UTF-8')]
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.*;  
+
+
+public class ["main" + aMap.name] {
+
+	//definition des attributs
+	private static String currentPlace;
+	private static Explorer explorer = new Explorer("[explorer.name]",[explorer.attributes.maxInt]);
+
+	//Maps des éléments
+	public static Map<String, Place> placesMap = new HashMap<>(); 
+	[for (pl : Place | places)]
+	public static Place [pl.name];
+	placesMap.put("[pl.name]",[pl.name]);
+	[/for]
+
+	public static Map<String, Path> pathsMap = new HashMap<>(); 
+	[for (p : Path | paths)]
+	public static Path [p.name];
+	pathsMap.put("[p.name]",[p.name]);
+	[/for]
+
+	public static Map<String, NPC> npcsMap = new HashMap<>(); 
+	[for (npc : NPC | npcs)]
+	public static NPC [npc.name];
+	placesMap.put("[npc.name]",[npc.name]);
+	[/for]
+
+	public static Map<String, Item> itemsMap = new HashMap<>(); 
+	[for (i : Item | items)]
+	public static Item [i.name];
+	itemsMap.put("[i.name]",[i.name]);
+	[/for]
+
+	public static Map<String, Choice> choicesMap = new HashMap<>(); 
+	[for (ch : Choice | choices)]
+	public static Choice [ch.name];
+	choicesMap.put("[ch.name]",[ch.name]);
+	[/for]
+
+	public static Map<String, Action> actionsMap = new HashMap<>(); 
+	[for (ac : Action | actions)]
+	public static Action [ac.name];
+	actionsMap.put("[ac.name]",[ac.name]);
+	[/for]
+
+	public static Map<String, Condition> conditionsMap = new HashMap<>(); 
+	//[for (c : Condition | conditions)]
+	//public static Condition [c.name];
+	//conditionsMap.put("[c.name]",[c.name]);
+	//[/for]
+
+	public static Map<String, Knowledge> knowledgesMap = new HashMap<>(); 
+	[for (k : Knowledge | knowledges)]
+	public static Knowledge [k.name];
+	knowledgesMap.put("[k.name]",[k.name]);
+	[/for]
+
+	public static Map<String, Answer> answersMap = new HashMap<>(); 
+
+	public static Map<String, ConditionalAction> cActionsMap = new HashMap<>(); 
+	public static Map<String, ConditionalAnswer> cAnswersMap = new HashMap<>();
+	public static Map<String, ConditionalChoice> cChoicesMap = new HashMap<>();
+	public static Map<String, ConditionalItem> cItemsMap = new HashMap<>();
+	public static Map<String, ConditionalKnowledge> cKnowledgesMap = new HashMap<>();
+
+
+	public static void main(String[] args) {
+
+	//initialisation des places
+		[for (pl : Place | places)]
+			PlaceType type;
+			if ("[pl.attributes.type]"=="begin"){
+				type = PlaceType.BEGIN;
+				currentPlace = "[pl.name]";
+			} else if ("[pl.attributes.type]"=="normal"){
+				type = PlaceType.NORMAL;
+			} else {
+				type = PlaceType.END;
+			}
+
+			[pl.name] = new Place("[pl.name]","[pl.attributes.description.description]",[pl.attributes.type]);
+			
+			[for (place_path : Path | pl.attributes.paths)]
+				[pl.name].addPath("[place_path.name]");
+			[/for]
+			[for (place_npc : NPC | pl.attributes.npcs)]
+				[pl.name].addNpc("[place_npc.name]");
+			[/for]
+			[for (place_item : Item | pl.attributes.items)]
+				[pl.name].addItem("[place_item.name]");
+			[/for]
+			[for (place_knowledge : Knowledges | pl.attributes.knowledges)]
+				[pl.name].addKnowledge("[place_knowledge.name]");
+			[/for]
+
+			//if ([pl.placeItemCondition] != null){
+			//	[pl.name].setPlaceItemCondition("[pl.attributes.placeItemCondition]");
+			//}
+		[/for]
+
+	//initialisation des chemins
+		[for (p : Path | paths)]
+			[p.name] = new Path("[p.name]","[p.attributes.description.description]","[p.attributes.to.name]");
+			
+			[for (path_item : ConditionnalItem | p.attributes.items)]
+				String itemName = "[path_item.item.name]";
+				ConditionnalItem cItem = new ConditionnalItem(itemName);
+				//if ([path_item.condition] != null){
+				//	cItem.setCondition("[path_item.condition]");
+				//}
+				cItemsMap.put(itemName, cItem);
+				[p.name].addItem(itemName);
+			[/for]
+
+			[for (path_knowledge : ConditionnalKnowledge | p.attributes.knowledge)]
+				String knowledgeName = "[path_knowledge.knowledge.name]";
+				ConditionnalItem cKnowledge = new ConditionnalKnowledge(knowledgeName);
+				//if ([path_knowledge.condition] != null){
+				//	cKnowledge.setCondition("[path_knowledge.condition]");
+				//}
+				cKnowledgesMap.put(knowledgeName, cKnowledge);
+				[p.name].addKnowledge(knowledgeName);
+			[/for]
+
+			[for (path_item : ConditionnalItem | p.attributes.itemsConsumed)]
+				String itemName = "[path_item.item.name]";
+				ConditionnalItem cItem = new ConditionnalItem(itemName);
+				//if ([path_item.condition] != null){
+				//	cItem.setCondition("[path_item.condition]");
+				//}
+				cItemsMap.put(itemName, cItem);
+				[p.name].addItemConsumed(itemName);
+			[/for]
+
+			//if ([p.attributes.visibleCondition] != null){
+			//	[p.name].setVisibleCondition([p.attributes.visibleCondition]);
+			//}
+			//if ([p.attributes.openedCondition] != null){
+			//	[p.name].setOpenedCondition([p.attributes.openedCondition]);
+			//}
+			//if ([p.attributes.obligatoryCondition] != null){
+			//	[p.name].setObligatoryCondition([p.attributes.obligatoryCondition]);
+			//}
+		[/for]
+
+	//initialisation des PNJs
+		[for (npc : NPC | npcs)]
+			[npc.name] = new NPC("[npc.name]");
+
+			[for (npc_initial_choice : ConditionnalChoice | npc.attributes.initialChoices)]
+				String choiceName = "[npc_initial_choice.choice.name]";
+				ConditionnalChoice cChoice = new ConditionnalChoice(choiceName);
+				//if ([npc_initial_choice.condition] != null){
+				//	cChoice.setCondition([npc_initial_choice.condition]);//
+				//}
+				cItemsMap.put(choiceName, cChoice);
+				[npc.name].addInitialChoice(choiceName);
+			[/for]
+			
+			//if ([npc.attributes.visibleCondition] != null){
+			//	[npc.name].setVisibleCondition([npc.attributes.visibleCondition]);//
+			//}
+			//if ([npc.attributes.obligatoryCondition] != null){
+			//	[npc.name].setObligatoryCondition([npc.attributes.obligatoryCondition]);//
+			//}
+		[/for]
+
+
+	//initialisation des items
+		[for (it : Item | items)]
+			[it.name] = new Item("[it.name]","[it.attributes.description.description]",[it.attributes.size]);
+
+			[for (transformability_condition : ConditionalItem | it.attributes.transformabilityConditions)]
+				String itemName = "[transformability_condition.item.name]";
+				ConditionnalItem cItem = new ConditionnalItem(itemName);				
+				//if ([transformability_condition.condition] != null){
+				//	cItem.setCondition([transformability_condition.condition]);//
+				//}
+				cItemsMap.put(itemName, cItem);
+				[it.name].addTransformabilityCondition(itemName);
+			[/for]
+			
+			//if ([item.attributes.visibleCondition] != null){
+			//	[item.name].setVisibleCondition([item.attributes.visibleCondition]);//
+			//}
+		[/for]
+
+
+	//initialisation des choix
+		[for (choice : Choice | choices)]
+			[choice.name] = new Item("[choice.name]","[choice.attributes.text]");
+
+			[for (answer : ConditionalItem | choice.attributes.answers)] //initialiser les réponses
+				String answerName = "[answer.name]";
+				Answer a = new Answer(answerName, "[answer.attributes.action.name]");
+				
+				[for (next_choice : ConditionalChoice | answer.attributes.nextChoices)]
+					String choiceName = "[next_choice.choice.name]";
+					ConditionalChoice cChoice = new ConditionalChoice(choiceName);
+					//if ([next_choice.condition] != null){
+					//	cChoice.setCondition([next_choice.condition]);//
+					//}
+					cChoicesMap.put(choiceName, cChoices);
+					a.addNextChoices(choiceName);
+				[/for]
+
+				[for (p_action : ConditionalAction | answer.attributes.precedentActions)]
+					String actionName = "[answer.p_action.action.name]";
+					ConditionalAction cAction = new ConditionalAction(actionName);
+					//if ([p_action.condition] != null){
+					//	cAction.setCondition([p_action.condition]);//
+					//}
+					cActionsMap.put(actionName, cAction);
+					a.addPrecedentAction(actionName);
+				[/for]
+				
+				//if ([answer.attributes.condition] != null){
+				//	[answer.name].setCondition([answer.attributes.condition]);//
+				//}
+				answersMap.put(answerName,a);
+				[choice.name].addAnswer(answerName);
+			[/for]
+			
+			//if ([choice.attributes.endingCondition] != null){
+			//	[choice.name].setVisibleCondition([choice.attributes.endingCondition]);//
+			//}
+		[/for]
+
+	//initialisation des actions
+		[for (action : Action | actions)]
+			[action.name] = new Item("[action.name]");
+
+			[for (it : ConditionalItem | action.attributes.items)]
+				String itemName = "[it.item.name]";
+				ConditionalItem cItem = new ConditionnalItem(itemName);
+				//if ([it.condition] != null){
+				//	cItem.setCondition([it.condition]);//
+				//}
+				cItemsMap.put(itemName, cItem);
+				[action.name].addItem(itemName);
+			[/for]
+
+			[for (knw : ConditionalKnowledge | action.attributes.knowledges)] 
+				String knowledgeName = "[knw.knowledge.name]";
+				ConditionalKnowledge cKnowledge = new ConditionalKnowledge(knowledgeName);
+				//if ([knw.condition] != null){
+				//	cKnowledge.setCondition([knw.condition]);//
+				//}
+				cKnowledgesMap.put(knowledgeName, cKnowledge);
+				[action.name].addKnowledge(knowledgeName);
+			[/for]
+
+			[for (it : ConditionalItem | action.attributes.itemsConsumed)]
+				String itemName = "[it.item.name]";
+				ConditionalItem cItem = new ConditionnalItem(itemName);
+				//if ([it.condition] != null){
+				//	cItem.setCondition([it.condition]);//
+				//}
+				cItemsMap.put(itemName, cItem)
+				[action.name].addItemConsumed(itemName);
+			[/for]
+		[/for]
+
+	//initialisation des conditions
+		conditionsMap.put("default", new Condition());
+		//TODO
+
+	//initialisation des connaissances
+		[for (knowledge : Knowledge | knowledges)]
+			[knowledge.name] = new Knowledge("[knowledge.name]","[knowledge.attributes.description.description]");
+			//if ([knowledge.attributes.visibleCondition] != null){
+			//	[knowledge.name].setVisibleCondition([knowledge.attributes.visibleCondition]);//
+			//}
+		[/for]
+
+
+	//main
+		Boolean endGame = false;
+        Boolean endTurn; // = false;
+        Scanner scanner = new Scanner(System.in);
+
+        while (!endGame) {
+            endTurn = false;
+       
+            //afficher lieu courant
+            System.out.print("##### Lieu courant : "+ currentPlace +" #####");
+            //lancer les interactions automatiques
+            for (String n : placesMap.get(currentPlace.getNpcs())) {
+                NPC npc = npcsMap.get(n);
+                if (conditionsMap.get(npc.getVisibleCondition()).evaluate() 
+                        && conditionsMap.get(npc.getObligatoryCondition()).evaluate()){
+                    launchInteraction(n);
+                }
+            }
+            //lancer les chemins automatiques
+            for (String p : placesMap.get(currentPlace.getPaths())) {
+                Path path = pathsMap.get(p);
+                if (conditionsMap.get(path.getVisibleCondition()).evaluate() 
+                        && conditionsMap.get(path.getObligatoryCondition()).evaluate() 
+                        && conditionsMap.get(path.getOpenedCondition()).evaluate()){
+                    currentPlace = path.getTo();
+                    endTurn = true;
+                    break;
+                }
+            }
+            
+            //proposer les actions possibles au joueur
+            int answer;
+            while (!endTurn) {
+                printChoices();
+                answer = scanner.nextInt();
+
+                switch (answer) {
+                    case 1:
+                        printInventory();
+                        break;
+
+                    case 2:
+                        printCurrentPlace();
+                        break;
+
+                    case 3:
+                        ArrayList<String> nList = printNPCS();
+                        answer = scanner.nextInt();
+                        launchInteraction(nList.get(answer-1));
+                        break;
+
+                    case 4:
+                        ArrayList<String> iList = printCurrentPlaceItems();
+                        answer = scanner.nextInt();
+                        takeItem(iList.get(answer-1));
+                        break;
+
+                    case 5:
+                        ArrayList<String> iList = printExplorerItems();
+                        answer = scanner.nextInt();
+                        dropItem(iList.get(answer-1));
+                        break;
+
+                    case 6:
+                        ArrayList<String> pList = printPaths();
+                        answer = scanner.nextInt();
+                        takePath(pList.get(answer-1));
+                        endTurn = true;
+                        break;
+
+                    case 7:
+                        endTurn = true;
+                        endGame = true; 
+                        break;
+
+                    default:
+                        System.out.println("/!\ Choix incorrect.");
+                        break;
+                } 
+            }
+        }
+        scanner.close();
+    }
+//////////////////////////////////////////////////////////////// Affichage
+
+    public void printChoices() {
+        System.out.println("##### Que voulez vous faire ? #####");
+        System.out.println("1. Afficher les détails de votre inventaire.");
+        System.out.println("2. Afficher les détails du lieu courant.");
+        System.out.println("3. Intéragir avec un PNJ.");
+        System.out.println("4. Prendre un objet.");
+        System.out.println("5. Déposer un objet.");
+        System.out.println("6. Emprunter un chemin.");
+        System.out.println("7. Quitter le jeu");
+    }
+
+    public void printInventory(){
+        Integer poids = 0;
+        ArrayList<String> its = explorer.getItems();
+        System.out.println("##### Inventaire #####");
+        System.out.println("--- Items ---");
+        for (String it : its) {
+            Item item = itemsMap.get(it);
+            printItem(it, 0);
+            poids += item.getSize();
+        }
+        System.out.println("--- place utilisée : " + poids +"/"+ explorer.maxInt +" ---");
+    }
+    
+    public void printCurrentPlace(){
+
+        Place place = placesMap.get(currentPlace);
+        System.out.println("##### Lieu Courant #####");
+        System.out.println("Nom : " + currentPlace);
+        System.out.println("Description : " + place.getDescription());
+        System.out.println("--- Chemins possibles ---");
+        ArrayList<String> ps = place.getPaths();
+        for (String p : ps){
+            Path path = pathsMap.get(p);
+            if (conditionsMap.get(path.getVisibleCondition()).evaluate()){
+                printPath(p, 0);
+            }
+        }
+        System.out.println("--- Objets disponibles ---");
+        ArrayList<String> its = place.getItems();
+        for (String it : its){
+            Item item = itemsMap.get(it);
+            printItem(it, 0);
+        }
+        System.out.println("--- PNJs ---");
+        ArrayList<String> ns = place.getNPCs();
+        for (String n : ns){
+            NPC npc = npcsMap.get(n);
+            if (conditionsMap.get(npc.getVisibleCondition()).evaluate()) {
+                printNPC(n,0);
+            }
+        }
+    }
+
+////////////////////////////////////////////////////////////////  Affichage des listes d'éléments
+    public ArrayList<String> printNPCS() {
+        Integer j = 1;
+        ArrayList<String> nV = new ArrayList<String>();
+        for (String n : placesMap.get(currentPlace).getNPCs()) {
+            NPC npc = npcsMap.get(n);
+            if (conditionsMap.get(npc.getVisibleCondition()).evaluate()) {
+                printNPC(n,j);
+                j++;
+                nV.add(n);
+            }
+        }
+        return Nv;
+    }
+    public ArrayList<String> printCurrentPlaceItems() {
+        Integer j = 1;
+        ArrayList<String> iV = new ArrayList<String>();
+        for (String i : placesMap.get(currentPlace).getItems()) {
+            Item item = itemsMap.get(i);
+            printItem(i,j);
+            j++;
+            iV.add(i);
+        }
+        return iV;
+    }
+    public ArrayList<String> printExplorerItems() {
+        Integer j = 1;
+        ArrayList<String> iV = new ArrayList<String>();
+        for (String i : explorer.getItems()) {
+            Item item = itemsMap.get(i);
+            printItem(i,j);
+            j++;
+            iV.add(i);
+        }
+        return iV;
+    }
+    public ArrayList<String> printPaths() {
+        Integer j = 1;
+        ArrayList<String> pV = new ArrayList<String>();
+        for (String p : placesMap.get(currentPlace).getPaths()) {
+            Path path = pathsMap.get(p);
+            if (conditionsMap.get(path.getVisibleCondition()).evaluate() 
+                    && conditionsMap.get(path.getOpenedCondition()).evaluate()) {
+                printItem(p,j);
+                j++;
+                pV.add(p);
+            }
+        }
+        return pV;
+    }
+
+//////////////////////////////////////////////////////////////// Dialogues avec un PNJ
+
+    public void launchInteraction(String n) {
+        NPC npc = npcsMap.get(n);
+        for (String ic : npc.getInitialChoices()){ // on prend le premier choix
+            ConditionalChoice cc = cChoicesMap.get(ic);
+            if (conditionsMap.get(cc.getCondition()).evaluate()){
+                launchChoice(cc.getChoice(), new ArrayList<String>());
+                break;
+            }
+        }
+    }
+
+    public void launchChoice(String c, ArrayList<String> preActions) {
+        Choice choice = choicesMap.get(c);
+        System.out.println(choice.getName() +" : "+choice.getText());
+        Integer j = 1;
+        for (String a : choice.getAnswers()){
+            Answer answer = answersMap.get(a);
+            System.out.println(j+" - "+answer.getName());
+            j++;
+        }
+        Scanner scanner = new Scanner(System.in);
+        readAnswer = scanner.nextInt();
+        String ans = choice.getAnswers().get(readAnswer-1);
+        Answer answer = answersMap.get(ans);
+        
+        if (conditionsMap.get(answer.getConditions()).evaluate()){
+            //faire l'action associée
+            String action = ans.getAction();
+            executeAction(action);
+            //ajouter l'action à la liste des precedentActions.
+            preActions.add(action);
+            answer.setPrecedentActions(preActions);
+        }
+
+        if (!conditionsMap.get(choice.getEndingCondition()).evaluate()) {
+            for (String nc : answer.getNextChoices()){ // lancer le choix suivant
+                ConditionalChoice cc = cChoicesMap.get(nc);
+                if (conditionsMap.get(cc.getCondition()).evaluate()){
+                    launchChoice(cc.getChoice(), preActions);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void executeAction(String sAction) {
+
+        Action action = actionsMap.get(sAction);
+
+        // récupérer un objet
+        for (String sCondItem : sAction.getItems()) {
+            ConditionalItem ci = cItemsMap.get(sCondItem);
+            String sItem = ci.getItem();
+            takeItem(sItem);
+        }
+        // acquérir une connaissance
+        for (String sKnowledge : sAction.getKnowledges()) {
+            ConditionalKnowledge ck = cKnowledgeMap.get(sKnowledge);
+            String knowledge = ck.getKnowledge();
+            explorer.addKnowledge(knowledge);
+        }        
+        // perdre un objet
+        for (String sCondItem : sAction.getItemsConsumed()) {
+            ConditionalItem ci = cItemsMap.get(sCondItem);
+            String sItem = ci.getItem();
+            explorer.setItems(explorer.getItems().remove(sItem));
+        }
+    }
+
+//////////////////////////////////////////////////////////////// Actions exécutées
+
+    public void takeItem(String itemTaken) {
+        for (String i : explorer.getItems()) {
+            Item item = itemsMap.get(i);
+            poids += item.getSize();
+        }
+        Item it = itemsMap.get(itemTaken);
+        if (it.getSize + poids > explorer.maxInt) {
+            System.out.println("/!\ Attention, vous ne pouvez pas prendre cet objet, vous êtes trop chargé.")
+        } else {
+            explorer.addItem(it.getName());
+            Place cPlace = placesMap.get(currentPlace);
+            cPlace.setItems(cPlace.getItems().remove(itemTaken));
+            System.out.println("~ Objet récupéré.")
+        }
+    }
+    public void dropItem (String i) {
+        placesMap.get(currentPlace).addItem(i);
+        explorer.setItems(explorer.getItems().remove(i));
+        System.out.println("~ Objet déposé.")
+    }
+    public void takePath(String p){
+        currentPlace = pathsMap.get(p).getTo();
+        System.out.println("~ Chemin pris.")
+    }
+
+//////////////////////////////////////////////////////////////// Affichage des éléments simples
+
+    public void printItem(String it, Integer num) {
+        Item item = itemsMap.get(it);
+        if (num == 0) {
+            System.out.println("- "+item.getName() + " : " item.getDescription() + " (taille :" + item.getSize() +")");
+        } else {
+            System.out.println(num + " - "+item.getName() + " : " item.getDescription() + " (taille :" + item.getSize() +")");
+        }
+    }
+    public void printPath(String p, Integer num) {
+        Path path = pathsMap.get(p);
+        if (num == 0) {
+            String state;
+            if (conditionsMap.get(path.getOpenedCondition()).evaluate()){
+                state = "ouvert";
+            } else {
+                state = "fermé";
+            }
+            System.out.println("- "+path.getName() + " : " path.getDescription() + " (mène vers :" + path.getTo() +") ["+state+"]");
+        } else {
+            System.out.println(num + " - "+path.getName() + " : " path.getDescription() + " (mène vers :" + path.getTo() +")");
+        }
+    }
+    public void printNPC(String n, Integer num) {
+        NPC npc = npcsMap.get(n);
+        if (num == 0) {
+            System.out.println("- "+npc.getName());
+        } else {
+            System.out.println(num + " - "+npc.getName());
+        }
+    }
+}
+[/file]
+
+
+[/let]
+[/let]
+[/let]
+[/let]
+[/let]
+[/let]
+[/let]
+[/let]
+[/let]
+[/template]
+
+
+
+[query public getElements(m : MainMap) : OrderedSet(MapElements) = 
+	m.elements->select( e | e.oclIsTypeOf(MapElements) )
+		->collect( e | e.oclAsType(MapElements) )
+		->asOrderedSet()
+/]
+
+[query public getEplorer(m : MainMap) : Explorer = 
+	m.elements->select( e | e.oclIsTypeOf(Explorer) )
+		->collect( e | e.oclAsType(Explorer) )
+		->asOrderedSet()
+		->first()
+/]
+[query public getPlaces(m : MainMap) : OrderedSet(Place) = 
+	m.elements->select( e | e.oclIsTypeOf(Place) )
+		->collect( e | e.oclAsType(Place) )
+		->asOrderedSet()
+/]
+
+[query public getPaths(m : MainMap) : OrderedSet(Path) = 
+	m.elements->select( e | e.oclIsTypeOf(Path) )
+		->collect( e | e.oclAsType(Path) )
+		->asOrderedSet()
+/]
+[query public getNPCs(m : MainMap) : OrderedSet(NPC) = 
+	m.elements->select( e | e.oclIsTypeOf(NPC) )
+		->collect( e | e.oclAsType(NPC) )
+		->asOrderedSet()
+/]
+
+
+[query public getItems(m : MainMap) : OrderedSet(Item) = 
+	m.elements->select( e | e.oclIsTypeOf(Item) )
+		->collect( e | e.oclAsType(Item) )
+		->asOrderedSet()
+/]
+[query public getChoices(m : MainMap) : OrderedSet(Choice) = 
+	m.elements->select( e | e.oclIsTypeOf(Choice) )
+		->collect( e | e.oclAsType(Choice) )
+		->asOrderedSet()
+/]
+[query public getActions(m : MainMap) : OrderedSet(Action) = 
+	m.elements->select( e | e.oclIsTypeOf(Action) )
+		->collect( e | e.oclAsType(Action) )
+		->asOrderedSet()
+/]
+[query public getConditions(m : MainMap) : OrderedSet(Condition) = 
+	m.elements->select( e | e.oclIsTypeOf(Condition) )
+		->collect( e | e.oclAsType(Condition) )
+		->asOrderedSet()
+/]
+[query public getKnowledges(m : MainMap) : OrderedSet(Knowledges) = 
+	m.elements->select( e | e.oclIsTypeOf(Knowledges) )
+		->collect( e | e.oclAsType(Knowledges) )
+		->asOrderedSet()
+/]
