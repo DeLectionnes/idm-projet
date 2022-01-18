@@ -19,16 +19,16 @@ op finished = [for (pl : Place | aMainMap.getPlaceEnd()) separator('\\/') after 
 [/file]
 
 [file (aMainMap.name + '_pathObl.ltl', false, 'UTF-8')]
-[for (place : Place | aMainMap.getPlaces()) separator(';')]
-	[for (path : Path | place.getPaths()) separator('/\\')][comment
+[for (place : Place | aMainMap.getPlaces()) separator(';')][comment
+	/][for (path : Path | place.getPaths()) separator('/\\')][comment
 		/][path.attributes.visibleCondition.evaluate()/] /\ [path.attributes.openedCondition.evaluate()/] /\ [path.attributes.obligatoryCondition.evaluate()/]
 	[/for] = false[comment
 /][/for] 
 [/file]
 
 [file (aMainMap.name + '_npcObl.ltl', false, 'UTF-8')]
-[for (place : Place | aMainMap.getPlaces()) separator(';')]
-	[for (npc : NPC | place.getNPCs()) separator('/\\')][comment
+[for (place : Place | aMainMap.getPlaces()) separator(';')][comment
+	/][for (npc : NPC | place.getNPCs()) separator('/\\')][comment
 		/][npc.attributes.obligatoryCondition.evaluate()/][/for] = false[comment
 /][/for] 
 [/file]
