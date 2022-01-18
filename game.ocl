@@ -106,7 +106,7 @@ def: getItem() : Item =
 context MainMap
 inv oneExplo : self.elements -> one(element | element.oclIsTypeOf(Explorer))
 
-/* E6 Le nombre d’objets que peut posséder un explorateur est limité par la taille cumulée des objets possédés. */
+/* E6 (E3) Le nombre d’objets que peut posséder un explorateur est limité par la taille cumulée des objets possédés. */
 context Explorer
 inv maxSizeItem : self.attributes.maxSize >= self.attributes.items
 	-> iterate(item; sum:Integer = 0 |

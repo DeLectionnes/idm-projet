@@ -18,6 +18,10 @@ op finished = [for (pl : Place | aMainMap.getPlaceEnd()) separator('\\/') after 
 [for (item : Item | aMainMap.getItemPlace()) separator(' + ')][item.name/]Expl * [item.attributes.size/][/for] <= [aMainMap.getExplorer().attributes.maxSize/];
 [/file]
 
+[file (aMainMap.name + '_nbreExplo.ltl', false, 'UTF-8')]
+[for (place : Place | aMainMap.getPlace()) separator(' + ')][place.name/][/for] = 1;
+[/file]
+
 [file (aMainMap.name + '_pathObl.ltl', false, 'UTF-8')]
 [for (place : Place | aMainMap.getPlaces()) separator(';')][comment
 	/][for (path : Path | place.getPaths()) separator('/\\')][comment
@@ -32,6 +36,8 @@ op finished = [for (pl : Place | aMainMap.getPlaceEnd()) separator('\\/') after 
 		/][npc.attributes.obligatoryCondition.evaluate()/][/for] = false[comment
 /][/for] 
 [/file]
+
+
 
 [/template]
 
