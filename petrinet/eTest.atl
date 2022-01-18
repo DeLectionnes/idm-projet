@@ -1,0 +1,358 @@
+module Expl2PetriNet;
+create OUT: petrinet from  IN: prototypeExplo;
+
+
+-- get all the elements of the network
+helper context petrinet!Network
+def: getAllElements() : petrinet!NetworkElements =
+	petrinet!NetworkElements.allInstances()
+		->asSequence();
+
+-- get the starting place of the path
+helper context prototypeExplo!Path
+def: getStartingPlace(): prototypeExplo!Place =
+	prototypeExplo!Place.allInstances()
+		-> select(place | place.attributes.paths.includes(self) or place.attributes.paths.includes(self.name))
+		-> asSequence()
+		-> first();
+
+-- get the place that has that name
+helper context String
+def: getPlaceByName() : prototypeExplo!Place =
+	prototypeExplo!Place.allInstances()
+		-> select (place | place.name = self)
+		-> asSequence()
+		-> first();
+
+-- savoir si les states correspondants à cet item existent déjà
+helper context prototypeExplo!Item
+def: exists() : Boolean =
+	petrinet!State.allInstances()
+		-> asSequence()
+		-> select(state | state.name = self.name + 'Expl') -- si celle de l'explorateur existe alors les autres aussi
+		-> asSequence().size() > 0;
+
+--get the state corresponding to the explorer's item slot
+helper context prototypeExplo!Item
+def: getExploState() : petrinet!State = 
+	petrinet!State.allInstances()
+		-> asSequence()
+		-> select(state | state.name = self.name + 'Expl')
+		-> asSequence()
+		-> first();
+
+
+helper context prototypeExplo!PlaceAttributes
+def: isItemInPlace(item : prototypeExplo!Item) : Boolean = 
+	self.items->includes(item.name) or self.items->includes(item);
+
+helper context prototypeExplo!Item
+def: getPlace() : prototypeExplo!Place =
+	prototypeExplo!Place.allInstances()
+		-> asSequence()
+		-> select(place | place.attributes.isItemInPlace(self))
+		-> asSequence()
+		-> first();
+
+-- get the state corresponding to the place in which the item is
+helper context prototypeExplo!Item
+def: getPlaceState() : petrinet!State = 
+	petrinet!State.allInstances()
+		-> asSequence()
+		-> select(state | state.name = self.name + self.getPlace().name)
+		-> asSequence()
+		-> first();
+
+
+
+-- get the initial explorer's number of an item
+helper context prototypeExplo!Item
+def: getExplorerNumber() : Integer =
+	prototypeExplo!Explorer.allInstances()
+		-> asSequence()
+		-> first().items
+		-> select(item | item.name = self.name)
+		-> asSequence().size();
+
+-- get the initial place's number of an item 
+helper context prototypeExplo!Item
+def: getPlaceNumber() : Integer =
+	prototypeExplo!Place.allInstances()
+	-> select(place | place.items.includes(self.name))
+	-> collect(place | place.oclAsType(prototypeExplo!Place))
+	-> select(item | item.name = self.name)
+	-> asSequence().size();
+
+-- tells if the item belongs to the explorer or not
+helper context prototypeExplo!Item
+def: isExplorers() : Boolean =
+	prototypeExplo!Explorer.allInstances()
+		-> first().attributes.items
+		-> select(item | item = self.name or item = self)
+		-> size() <> 0;
+
+helper context prototypeExplo!Knowledge
+def: getState() : petrinet!State =
+	petrinet!State.allInstances()
+		-> select(state | state.name = self.name + 'Knowledge')
+		-> first();
+
+
+rule Knowledge2PetriNet{
+	from know : prototypeExplo!Knowledge
+	to sk : petrinet!State(
+				name <- know.name + 'Knowledge',
+				tokens <- 0)
+}
+
+rule Place2PetriNet{
+	from place : prototypeExplo!Place
+	to sp : petrinet!State(
+				name <- place.name,
+				tokens <- if place.attributes.type.begin = 'begin' then 1 else 0 endif)
+}
+
+
+rule Item2PetriNet {
+	from item : prototypeExplo!Item
+	do {
+		-- On vérifie que les places ne sont pas déjà créées
+   		if (not item.exists()) {
+			-- Plus la state de l'explorateur
+			thisModule.createItemExploState(item);
+   			-- Créer un state objet pour chaque place plus l'explorateur
+			for (place in prototypeExplo!Place.allInstances()) {
+				thisModule.createItemPlaceState(place, item);
+			}
+   		}
+		-- Augmenter le nombre de token correspondant dans la bonne state
+		if (item.isExplorers()) {
+			item.getExploState().tokens <- item.getExploState().tokens + 1;
+		} else {
+			item.getPlaceState().tokens <- item.getPlaceState().tokens + 1;
+		}
+	}
+}
+
+lazy rule createItemExploState {
+	from item : prototypeExplo!Item
+	to state : petrinet!State(
+				name <- item.name + 'Expl',
+				tokens <- 0)
+}
+
+
+lazy rule createItemPlaceState {
+	
+	from place : prototypeExplo!Place,
+		item : prototypeExplo!Item
+	using {i : Integer = 0; }
+	to itemState : petrinet!State(
+				name <- item.name + place.name,
+				tokens <- 0)
+	
+	do {
+		if (place.attributes.placeItemCondition.oclIsTypeOf(prototypeExplo!Bool)) {
+			if (place.attributes.placeItemCondition.false = 'false') {
+				-- we do nothing because we can't drop or take any item
+			} else {
+				thisModule.createTransTrue(place, item, itemState);
+			}
+		} else {
+			for (conjunction in place.attributes.placeItemCondition.conjunctions) {
+				thisModule.createTransConjunction(place, item, itemState, conjunction, i);
+				i = i+1;
+			}
+		}
+	}
+}
+
+lazy rule createTransTrue {
+	from place : prototypeExplo!Place,
+		item : prototypeExplo!Item,
+		itemState : petrinet!State
+	to transitionDrop : petrinet!Transition(
+				name <- 'drop' + item.name + place.name),
+		transitionTake : petrinet!Transition(
+			name <- 'take' + item.name + place.name),
+		item2take : petrinet!Arc(
+			tokens <- 1,
+			predecessor <- itemState,
+			successor <- transitionTake),
+		sp2take : petrinet!ReadArc(
+			tokens <- 1,
+			predecessor <- thisModule.resolveTemp(place, 'sp'),
+			successor <- transitionTake),
+		take2expl : petrinet!Arc(
+			tokens <- 1,
+			predecessor <- transitionTake,
+			successor <- item.getExploState()),
+		sp2drop : petrinet!ReadArc(
+			tokens <- 1,
+			predecessor <- thisModule.resolveTemp(place, 'sp'),
+			successor <- transitionDrop),
+		drop2item : petrinet!Arc(
+			tokens <- 1,
+			predecessor <- transitionDrop,
+			successor <- itemState),
+		expl2drop :  petrinet!Arc(
+			tokens <- 1,
+			predecessor <- item.getExploState(),
+			successor <- transitionDrop)
+}
+
+
+lazy rule createTransConjunction {
+	from place : prototypeExplo!Place,
+		item : prototypeExplo!Item,
+		itemState : petrinet!State,
+		conjunction : prototypeExplo!Conjunction,
+		i : Integer
+	to transitionDrop : petrinet!Transition(
+				name <- 'drop' + i + item.name + place.name),
+		transitionTake : petrinet!Transition(
+			name <- 'take' + i + item.name + place.name),
+		item2take : petrinet!Arc(
+			tokens <- 1,
+			predecessor <- itemState,
+			successor <- transitionTake),
+		sp2take : petrinet!ReadArc(
+			tokens <- 1,
+			predecessor <- thisModule.resolveTemp(place, 'sp'),
+			successor <- transitionTake),
+		take2expl : petrinet!Arc(
+			tokens <- 1,
+			predecessor <- transitionTake,
+			successor <- item.getExploState()),
+		sp2drop : petrinet!ReadArc(
+			tokens <- 1,
+			predecessor <- thisModule.resolveTemp(place, 'sp'),
+			successor <- transitionDrop),
+		drop2item : petrinet!Arc(
+			tokens <- 1,
+			predecessor <- transitionDrop,
+			successor <- itemState),
+		expl2drop :  petrinet!Arc(
+			tokens <- 1,
+			predecessor <- item.getExploState(),
+			successor <- transitionDrop)
+	do {
+		for (cond in conjunction.conditions) {
+			if (cond.item.oclIsUndefined()) {
+				thisModule.createKnowledgeCondition(cond.knowlegde, transitionDrop);
+				thisModule.createKnowledgeCondition(cond.knowlegde, transitionTake);
+			} else {
+				if (cond.negation.oclIsUndefined() or cond.negation <> 'not') {
+					if (cond.comparateur.gt = '>') {
+						if (item = cond.item) {
+							thisModule.createSupEqConditionNoArc(cond.item.getExploState(), transitionDrop, transitionTake, cond.constante+1);
+						} else {
+							thisModule.createSupEqConditionWithArc(cond.item.getExploState(), transitionDrop, transitionTake, cond.constante+1);
+						}
+					} else {
+						if (cond.comparateur.gte = '>=') {
+							if (item = cond.item) {
+								thisModule.createSupEqConditionNoArc(cond.item.getExploState(), transitionDrop, transitionTake, cond.constante);
+							} else {
+								thisModule.createSupEqConditionWithArc(cond.item.getExploState(), transitionDrop, transitionTake, cond.constante);
+							}
+						}
+					}
+				} else {
+					if (cond.comparateur.lte = '<=') {
+						if (item = cond.item) {
+							thisModule.createSupEqConditionNoArc(cond.item.getExploState(), transitionDrop, transitionTake, cond.constante+1);
+						} else {
+							thisModule.createSupEqConditionWithArc(cond.item.getExploState(), transitionDrop, transitionTake, cond.constante+1);
+						}					
+					} else {
+						if (cond.comparateur.lt = '<') {
+							if (item = cond.item) {
+								thisModule.createSupEqConditionNoArc(cond.item.getExploState(), transitionDrop, transitionTake, cond.constante);
+							} else {
+								thisModule.createSupEqConditionWithArc(cond.item.getExploState(), transitionDrop, transitionTake, cond.constante);
+							}							
+						}
+					}
+				}
+			}
+		}
+	}
+}
+lazy rule createSupEqConditionWithArc {
+	from itemCond : petrinet!State,
+		transitionDrop : petrinet!Transition,
+		transitionTake : petrinet!Transition,		
+		readArcToken : Integer
+	to arc1 : petrinet!Arc(
+		tokens <- 1,
+		predecessor <- itemCond,
+		successor <- transitionDrop),
+		
+	readArc1 : petrinet!ReadArc(
+		tokens <- readArcToken,
+		predecessor <- itemCond,
+		successor <- transitionDrop),
+		
+	arc2 : petrinet!Arc(
+		tokens <- 1,
+		predecessor <- itemCond,
+		successor <- transitionTake),
+		
+	readArc2 : petrinet!ReadArc(
+		tokens <- readArcToken,
+		predecessor <- itemCond,
+		successor <- transitionTake)
+}
+
+
+lazy rule createSupEqConditionNoArc {
+	from itemCond : petrinet!State,
+		transitionDrop : petrinet!Transition,
+		transitionTake : petrinet!Transition,		
+		readArcToken : Integer
+	to readArc1 : petrinet!ReadArc(
+		tokens <- readArcToken,
+		predecessor <- itemCond,
+		successor <- transitionDrop),
+		
+	readArc2 : petrinet!ReadArc(
+		tokens <- readArcToken,
+		predecessor <- itemCond,
+		successor <- transitionTake)
+}
+
+
+lazy rule createKnowledgeCondition {
+	from knowledge : prototypeExplo!Knowledge,
+		transition : petrinet!Transition
+	to readArc : petrinet!ReadArc(
+			tokens <- 1,
+			predecessor <- knowledge.getState(),
+			successor <- transition)
+	
+}
+
+rule Path2PetriNet{
+	from path : prototypeExplo!Path
+	to 	transition : petrinet!Transition(
+						name <- path.getStartingPlace().name + '2' + path.attributes.finishingPlace.name.getPlaceByName().name)
+				,
+		aller1 : petrinet!Arc(
+				tokens <- 1,
+				predecessor <- thisModule.resolveTemp(path.getStartingPlace(), 'sp'),
+				successor <- transition)
+				,
+		
+		aller2 : petrinet!Arc(
+				tokens <- 1,
+				predecessor <- transition,
+				successor <- thisModule.resolveTemp(path.attributes.finishingPlace.name.getPlaceByName(), 'sp'))				
+}
+
+
+rule MainMap2PetriNet {
+	from mainMap : prototypeExplo!MainMap
+	to net : petrinet!Network(name <- mainMap.name,
+		networkElements <- net.getAllElements())
+}
