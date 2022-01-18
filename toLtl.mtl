@@ -1,0 +1,137 @@
+[comment encoding = UTF-8 /]
+[module toLtl('http://www.n7.fr/PrototypeExplo')]
+
+
+[template public MainMaptoLtl(aMainMap : MainMap)]
+[comment @main/]
+[file (aMainMap.name + '_finish.ltl', false, 'UTF-8')]
+op finished = [for (pl : Place | aMainMap.getPlaceEnd()) separator('\\/') after (';')][pl.name/][/for]
+
+['[]'/] (finished => dead);
+['[]'/] <> dead ;
+['[]'/] (dead => finished);
+- <> finished;
+
+[/file]
+
+[file (aMainMap.name + '_size.ltl', false, 'UTF-8')]
+[for (item : Item | aMainMap.getItemPlace()) separator(' + ')][item.name/]Expl * [item.attributes.size/][/for] <= [aMainMap.getExplorer().attributes.maxSize/];
+[/file]
+
+[file (aMainMap.name + '_pathObl.ltl', false, 'UTF-8')]
+[for (place : Place | aMainMap.getPlaces()) separator(';')]
+	[for (path : Path | place.getPaths()) separator('/\\')][comment
+		/][path.attributes.visibleCondition.evaluate()/] /\ [path.attributes.openedCondition.evaluate()/] /\ [path.attributes.obligatoryCondition.evaluate()/]
+	[/for] = false[comment
+/][/for] 
+[/file]
+
+[file (aMainMap.name + '_npcObl.ltl', false, 'UTF-8')]
+[for (place : Place | aMainMap.getPlaces()) separator(';')]
+	[for (npc : NPC | place.getNPCs()) separator('/\\')][comment
+		/][npc.attributes.obligatoryCondition.evaluate()/][/for] = false[comment
+/][/for] 
+[/file]
+
+[/template]
+
+[query public getPlaceEnd(map : MainMap) : OrderedSet(Place) = 
+	map.elements->select( e | e.oclIsTypeOf(Place))
+		-> collect(pl | pl.oclAsType(Place))
+		-> select (place | place.attributes.type = 'end')
+		-> asOrderedSet()
+/]
+
+[query public getItemPlace(map : MainMap) : OrderedSet(Item) = 
+	Item.allInstances()	-> asOrderedSet()
+/]
+
+[query public getExplorer(map : MainMap) : Explorer =
+	map.elements -> select( expl | expl.oclIsTypeOf(Explorer))
+		-> collect( expl | expl.oclAsType(Explorer))
+		-> first()
+/]
+
+[query public getPlaces(m : MainMap) : OrderedSet(Place) = 
+	m.elements->select( e | e.oclIsTypeOf(Place) )
+		->collect( e | e.oclAsType(Place) )
+		->asOrderedSet()
+/]
+
+[query public getPaths(pl : Place) : OrderedSet(Path) = 
+	pl.attributes.paths->select( path | path.oclIsTypeOf(Path) )
+		->collect( p | p.oclAsType(Path) )
+		->asOrderedSet()
+/]
+
+[query public getNPCs(pl : Place) : OrderedSet(NPC) = 
+	pl.attributes.npcs->select( npc | npc.oclIsTypeOf(NPC) )
+		->collect( npc | npc.oclAsType(NPC) )
+		->asOrderedSet()
+/]
+
+[query public isKnown(knowledge : Knowledge) : Boolean =
+	Explorer.allInstances()
+		-> asSequence()
+		-> first().attributes.knowledges
+		-> one(know | know = self)
+/]
+
+[query public getExplorerNumber(item : Item) : Integer =
+	Explorer.allInstances()
+		-> asSequence()
+		-> first().attributes.items
+		-> select(i | i.name = item.name)
+		-> size()
+/]
+
+[query public get(comp : Comparator) : String =
+	if comp.eq = '=' then '='
+	else if comp.neq = '!=' then '!='
+	else if comp.gte = '>=' then '>=' 
+	else if comp.lte = '<=' then '<='
+	else if comp.gt = '>' then '>' 
+	else if comp.lt = '<' then '<'
+	else ''
+	endif endif endif endif endif endif
+/]
+
+[query public evaluate(cond : AtomicCondition) : Boolean =
+	if not cond.knowlegde.oclIsUndefined() then
+		if cond.negation = 'not' then not cond.knowlegde.isKnown()
+		else cond.knowlegde.isKnown() endif
+	else if cond.negation = 'not' then
+			if cond.comparateur.get() = '=' then cond.item.getExplorerNumber() <> cond.constante
+			else if cond.comparateur.get() = '!=' then cond.item.getExplorerNumber() = cond.constante
+			else if cond.comparateur.get() = '<' then cond.item.getExplorerNumber() >= cond.constante
+			else if cond.comparateur.get() = '>' then cond.item.getExplorerNumber() <= cond.constante
+			else if cond.comparateur.get() = '<=' then cond.item.getExplorerNumber() > cond.constante
+			else if cond.comparateur.get() = '>=' then cond.item.getExplorerNumber() < cond.constante
+			else false
+			endif endif endif endif endif endif
+		else if cond.comparateur.get() = '=' then cond.item.getExplorerNumber() = cond.constante
+			else if cond.comparateur.get() = '!=' then cond.item.getExplorerNumber() <> cond.constante
+			else if cond.comparateur.get() = '<' then cond.item.getExplorerNumber() < cond.constante
+			else if cond.comparateur.get() = '>' then cond.item.getExplorerNumber() > cond.constante
+			else if cond.comparateur.get() = '<=' then cond.item.getExplorerNumber() <= cond.constante
+			else if cond.comparateur.get() = '>=' then cond.item.getExplorerNumber() >= cond.constante
+			else false 
+			endif endif endif endif endif endif
+			endif
+		endif
+/]
+
+[query public evaluate(conj  : Conjunction) : Boolean =
+	conj.conditions -> forAll(cond | cond.evaluate())
+/]
+
+[query public evaluate(ndf : NormalDisjunctiveForm) : Boolean = 
+	ndf.conjunctions -> exists(conj | conj.evaluate())
+/]
+
+[query public evaluate(cond : Condition) : Boolean =
+	if cond = 'true' then true
+	else if cond = 'false' then false
+	else cond.evaluate() 
+	endif endif
+/]
