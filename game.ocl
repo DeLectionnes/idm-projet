@@ -2,6 +2,7 @@ import 'model/generated/PrototypeExplo.ecore'
 
 package prototypeExplo
 
+/* isKnown() regarde si la knowledge est apprise par l explorer */
 context Knowledge
 def: isKnown() : Boolean =
 	Explorer.allInstances()
@@ -9,6 +10,7 @@ def: isKnown() : Boolean =
 		-> first().attributes.knowledges
 		-> one(know | know = self)
 
+/* getExplorerNumber() permet de connaitre le nombre de fois qu un explorer possède un objet. */
 context Item
 def: getExplorerNumber() : Integer =
 	Explorer.allInstances()
@@ -17,6 +19,7 @@ def: getExplorerNumber() : Integer =
 		-> select(item | item.name = self.name)
 		-> size()
 
+/* get() nous permet de prendre connaissance du comparateur choisis. */
 context Comparator
 def: get() : String =
 	if self.eq = '=' then '='
@@ -28,6 +31,7 @@ def: get() : String =
 	else ''
 	endif endif endif endif endif endif
 
+/* evaluate() ici nous sert a évaluer une atomique condition */
 context AtomicCondition
 def: evaluate() : Boolean =
 	if not self.knowlegde.oclIsUndefined() then
@@ -53,15 +57,17 @@ def: evaluate() : Boolean =
 			endif
 		endif
 
+/* evalutate() nous permet de vérifier si toutes les atomiques conditions sont vrai alors on renvoie vrai.*/
 context Conjunction
 def: evaluate() : Boolean =
 	self.conditions -> forAll(cond | cond.evaluate())
 
+/* evaluate() nous renvoie le booléen permettant de savoir si la condition est vraie ou fausse.*/
 context NormalDisjunctiveForm
 def: evaluate() : Boolean = 
 	self.conjunctions -> exists(conj | conj.evaluate())
 
-
+/* Renvoie la valeur de la condition */
 context Condition
 def: evaluate() : Boolean =
 	if self = 'true' then true
@@ -69,6 +75,7 @@ def: evaluate() : Boolean =
 	else self.evaluate() 
 	endif endif
 
+/* Cette fonction nous permet de renvoyer le path correspondant. */
 context Path
 def: getPath() : Path =
 	Path.allInstances()
@@ -76,7 +83,8 @@ def: getPath() : Path =
 		-> collect(path | path.oclAsType(Path))
 		-> asSequence()
 		-> first()
-		
+
+/* Cette fonction nous permet de renvoyer le NPC correspondant. */
 context NPC
 def: getNPC() : NPC =
 	NPC.allInstances()
@@ -85,8 +93,7 @@ def: getNPC() : NPC =
 		-> asSequence()
 		-> first()
 
-
-
+/* Cette fonction nous permet de renvoyer l item correspondant. */
 context Item
 def: getItem() : Item =
 	Item.allInstances()
