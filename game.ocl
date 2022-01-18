@@ -2,42 +2,129 @@ import 'model/generated/PrototypeExplo.ecore'
 
 package prototypeExplo
 
-context PathID
+context Knowledge
+def: isKnown() : Boolean =
+	Explorer.allInstances()
+		-> asSequence()
+		-> first().attributes.knowledges
+		-> one(know | know = self)
+
+context Item
+def: getExplorerNumber() : Integer =
+	Explorer.allInstances()
+		-> asSequence()
+		-> first().attributes.items
+		-> select(item | item.name = self.name)
+		-> size()
+
+context Comparator
+def: get() : String =
+	if self.eq = '=' then '='
+	else if self.neq = '!=' then '!='
+	else if self.gte = '>=' then '>=' 
+	else if self.lte = '<=' then '<='
+	else if self.gt = '>' then '>' 
+	else if self.lt = '<' then '<'
+	else ''
+	endif endif endif endif endif endif
+
+context AtomicCondition
+def: evaluate() : Boolean =
+	if not self.knowlegde.oclIsUndefined() then
+		if self.negation = 'not' then not self.knowlegde.isKnown()
+		else self.knowlegde.isKnown() endif
+	else if self.negation = 'not' then
+			if self.comparateur.get() = '=' then self.item.getExplorerNumber() <> self.constante
+			else if self.comparateur.get() = '!=' then self.item.getExplorerNumber() = self.constante
+			else if self.comparateur.get() = '<' then self.item.getExplorerNumber() >= self.constante
+			else if self.comparateur.get() = '>' then self.item.getExplorerNumber() <= self.constante
+			else if self.comparateur.get() = '<=' then self.item.getExplorerNumber() > self.constante
+			else if self.comparateur.get() = '>=' then self.item.getExplorerNumber() < self.constante
+			else false
+			endif endif endif endif endif endif
+		else if self.comparateur.get() = '=' then self.item.getExplorerNumber() = self.constante
+			else if self.comparateur.get() = '!=' then self.item.getExplorerNumber() <> self.constante
+			else if self.comparateur.get() = '<' then self.item.getExplorerNumber() < self.constante
+			else if self.comparateur.get() = '>' then self.item.getExplorerNumber() > self.constante
+			else if self.comparateur.get() = '<=' then self.item.getExplorerNumber() <= self.constante
+			else if self.comparateur.get() = '>=' then self.item.getExplorerNumber() >= self.constante
+			else false 
+			endif endif endif endif endif endif
+			endif
+		endif
+
+context Conjunction
+def: evaluate() : Boolean =
+	self.conditions -> forAll(cond | cond.evaluate())
+
+context NormalDisjunctiveForm
+def: evaluate() : Boolean = 
+	self.conjunctions -> exists(conj | conj.evaluate())
+
+
+context Condition
+def: evaluate() : Boolean =
+	if self = 'true' then true
+	else if self = 'false' then false
+	else self.evaluate() 
+	endif endif
+
+context Path
 def: getPath() : Path =
-	MainMap.allInstances() -> asSequence()->first()
+	Path.allInstances()
 		-> select (path | path.name = self)
 		-> collect(path | path.oclAsType(Path))
 		-> asSequence()
 		-> first()
 		
-context NPCID
+context NPC
 def: getNPC() : NPC =
-	MainMap.allInstances() -> asSequence()->first()
+	NPC.allInstances()
 		-> select (npc | npc.name = self)
 		-> collect(npc | npc.oclAsType(NPC))
 		-> asSequence()
 		-> first()
 
-		
-context ItemID
+
+
+context Item
 def: getItem() : Item =
-	MainMap.allInstances() -> asSequence()->first()
+	Item.allInstances()
 		-> select (item | item.name = self)
 		-> collect(item | item.oclAsType(Item))
 		-> asSequence()
 		-> first()
 
+/* E2 Le joueur unique est l’explorateur. */
+context MainMap
+inv oneExplo : self.elements -> one(element | element.oclIsTypeOf(Explorer))
+
 /* E6 Le nombre d’objets que peut posséder un explorateur est limité par la taille cumulée des objets possédés. */
 context Explorer
-inv maxSizeItem : self.maxSize >= self.items-> iterate(item; sum:Integer = 0 | sum + item.getItem().size)
+inv maxSizeItem : self.attributes.maxSize >= self.attributes.items
+	-> iterate(item; sum:Integer = 0 |
+		if item.oclIsTypeOf(String) then sum + item.getItem().attributes.size
+		else sum + item.attributes.size endif)
 
+/* E8 Le point de départ et les points de fin de l’exploration sont des lieux particuliers. */
+context MainMap
+inv existsBegin : self.elements -> select(place | place.oclIsTypeOf(Place))
+		-> collect(place | place.oclAsType(Place))
+		-> exists(place | place.attributes.type = 'begin')
+inv existsEnd : self.elements -> select(place | place.oclIsTypeOf(Place))
+		-> collect(place | place.oclAsType(Place))
+		-> exists(place | place.attributes.type = 'end')
+		
 /* E17 Il ne peut y avoir qu’un seul chemin obligatoire visible et ouvert par lieu. */
 context Place
-inv oneOVOPath : self.paths-> one(path |path.getPath().obligatoryCondition and path.getPath().visibleCondition and path.getPath().openedCondition)
-
+inv oneOVOPath : self.attributes.paths 
+-> one(path | if path.oclIsTypeOf(String) then
+				path.getPath().attributes.obligatoryCondition.evaluate() and path.getPath().attributes.visibleCondition.evaluate() and path.getPath().attributes.openedCondition.evaluate()
+			else path.attributes.obligatoryCondition.evaluate() and path.attributes.visibleCondition.evaluate() and path.attributes.openedCondition.evaluate()
+			endif
+)
 /* E26 : Il ne peut y avoir qu’une seule personne obligatoire par lieu. */
-context Place
-inv oneObligatoryNpc : self.NPCs -> one(npc | npc.getNPC().obligatoryCondition = true)
+inv oneObligatoryNpc : self.attributes.npcs -> one(npc | npc.attributes.obligatoryCondition.evaluate() = true)
 
 
 endpackage
