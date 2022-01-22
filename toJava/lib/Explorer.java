@@ -8,9 +8,9 @@ public class Explorer {
     private ArrayList<String> items = new ArrayList<String>();
     private ArrayList<String> knowledges = new ArrayList<String>();
 
-    public Explorer(String name, Integer maxInt) {
+    public Explorer(String name, Integer max) {
         this.name = name;
-        this.maxInt = maxInt;
+        maxInt = max;
     }
 
     public String getName() {
