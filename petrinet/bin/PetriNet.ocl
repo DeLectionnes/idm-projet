@@ -1,0 +1,17 @@
+import 'PetriNet.ecore'
+
+package petriNet
+
+/* Empêcher les arcs entre deux éléments identiques. */
+context Connector
+inv pred_diff_succ : 
+	not (self.successor.oclIsTypeOf(Transition) and self.predecessor.oclIsTypeOf(Transition)
+	or self.successor.oclIsTypeOf(State) and self.predecessor.oclIsTypeOf(State))
+
+
+/* Le read-arc relie un état à une transition */
+context ReadArc
+inv State2Transition :
+	self.predecessor.oclIsTypeOf(State) and self.successor.oclIsTypeOf(Transition)
+
+endpackage

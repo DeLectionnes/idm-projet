@@ -1,0 +1,168 @@
+grammar fr.n7.PrototypeExplo with org.eclipse.xtext.common.Terminals
+
+generate prototypeExplo "http://www.n7.fr/PrototypeExplo"
+/*La map a un nom pour l'identifier dans les OCL*/
+MainMap: 'map' name=STRING
+	'{' elements += MapElements+ '}'
+;
+/*L'objet MapElements sert à pouvoir énumérer les objets de la carte dans n'importe quel ordre. */
+MapElements: Explorer | Place | Item | Path | NPC | Choice | Action | Condition | Knowledge;
+
+/*E3 E6*/
+Explorer: 'explorer' name=STRING /*Dora par défaut*/
+	'{' attributes=ExplorerAttributes '}'
+;
+
+ExplorerAttributes: 
+	'maxSize' maxSize=INT /*La constante qui limite la taille cumulée des objets portés */
+	& ('items' '{' items+=[Item | STRING]+ '}')? /*Le deux champs optionnels permettent aussi de créer les attributs dans le méta-modèle */
+	& ('knowledges' '{' knowledges+=Knowledge+ '}')? /* */;
+
+
+Description: ( '(' condition=Condition ')')? description=STRING 
+;
+
+
+
+
+Item: 'item' name=STRING 
+	'{' attributes = ItemAttributes '}'
+;
+
+ItemAttributes:	'descriptions' '{'description+=Description+'}'
+	& 'size' size=INT 
+	& ('visibleCondition' visibleCondition=Condition)?
+	& ('transformabilityConditions' '{' transformabilityCondition+=ConditionalItem+ '}')? /*Si la liste est vide, l'item ne peut pas se transformer. */
+;
+
+ConditionalItem: ( '(' condition=Condition ')')? item=[Item|STRING]  /*J'ai hésité à mettre 'item' au début, mais cet élément est toujours précédé d'un mot clé avec item dedans quand il est appelé ailleurs. */
+;
+
+
+/*E3 */
+Knowledge: 'knowledge' name=STRING 
+	'{' attributes = KnowledgeAttributes '}'
+;
+
+KnowledgeAttributes:
+	'descriptions' '{'description+=Description+'}'
+	& ('visibleCondition' visibleCondition=Condition)?
+;
+
+ConditionalKnowledge: ( '(' condition=Condition ')')? knowledge=[Knowledge | STRING]
+;
+
+
+/*E7 E14*/
+Place: 'place' name=STRING 
+'{' attributes = PlaceAttributes '}'
+;
+
+PlaceAttributes:
+	'descriptions' '{'description+=Description+'}'
+	& 'type' type=PlaceType 
+	& 'paths' '{' paths+=[Path|STRING]+ '}'
+	& ('placeItemCondition' placeItemCondition=Condition)?
+	& ('items' '{' items+=[Item | STRING]+ '}')? 
+	& ('knowledges' '{' knowledges+=[Knowledge | STRING]+ '}')? 
+	& ('NPCs' '{' npcs+=[NPC | STRING]+ '}')?
+;
+
+/*Cela empèche techniquement un lieu d'être à la fois un début et une fin */
+PlaceType: normal = 'normal'
+	| begin = 'begin'
+	| end = 'end'
+;
+
+/*Il faut orienter les chemins par défaut, car il faut être capable de séparer les deux extrémités.*/
+Path: 'path' name=STRING 
+	'{' attributes = PathAttributes '}'
+;
+
+PathAttributes:
+	'descriptions' '{'description+=Description+'}'
+	& 'to' finishingPlace=[Place | STRING]
+	& ('visibleCondition' visibleCondition=Condition)?
+	& ('openedCondition' openedCondition=Condition)?
+	& ('obligatoryCondition' obligatoryCondition=Condition)?
+	& ('items' '{' items+=ConditionalItem+ '}')? 
+	& ('knowledges' '{' knowledges+=ConditionalKnowledge+ '}')? 
+	& ('itemsConsumed' '{' itemsConsumed+=ConditionalItem+ '}')?
+;
+
+
+/*Type booléen définit car pas présent par défaut*/
+Bool: true = 'true'
+	| false = 'false'
+;
+
+/*E25 */
+NPC: 'npc' name=STRING 
+	'{' attributes = NPCAttributes '}'	
+;
+	
+
+NPCAttributes:
+	('obligatoryCondition'  obligatoryCondition = Condition)?
+	& 'initialChoices' '{' initialChoice+=ConditionalChoice+ '}'
+	& ('visibleCondition' visibleCondition=Condition)?
+ 	;
+
+/*E23 */
+Condition: (NormalDisjunctiveForm | Bool)
+;
+
+/* Description des conditions*/
+Comparator: lt='<' 
+	| gt='>' 
+	| lte='<=' 
+	| gte='>=' 
+	| eq='=' 
+	| neq='!='
+;
+
+Negation: 'not';
+AtomicCondition: {AtomicCondition} (negation = Negation)? ((item=[Item|STRING] comparateur=Comparator constante=INT )| knowlegde = [Knowledge|STRING]) ;
+
+Conjunction: {Conjunction} conditions += AtomicCondition ('and' conditions += AtomicCondition)* ;
+
+NormalDisjunctiveForm: {NormalDisjunctiveForm} conjunctions += Conjunction ('or' conjunctions += Conjunction)*;
+
+
+/* E30 */
+Choice: 'choice' name=STRING
+	'{' attributes = ChoiceAttributes '}'	
+;
+
+ChoiceAttributes:
+	'text' text = STRING
+	& 'answers' '{' answers+=Answer* '}'
+	& ('endingCondition' endingCondition=Condition)?
+;
+
+Answer: ( '('condition=Condition')')? 'answer' name=STRING
+	'{' attributes = AnswerAttributes '}'	
+;
+
+AnswerAttributes:
+	'action' action=[Action|STRING]
+	& 'nextChoices' '{' nextChoice += ConditionalChoice+ '}'
+	& ('precedentActions' '{' precedentActions+=ConditionnalAction+ '}')?
+;
+
+ConditionalChoice:( '(' condition=Condition ')')? choice=[Choice| STRING]
+;
+
+
+Action: 'action' name=STRING 
+	'{' attributes = ActionAttributes '}'
+;
+
+ActionAttributes: 
+	('items' '{' items+=ConditionalItem+ '}')? 
+	& ('knowledges' '{' knowledges+=ConditionalKnowledge+ '}')? 
+	& ('itemsConsumed' '{' itemsConsumed+=ConditionalItem+ '}')?
+;
+
+ConditionnalAction: ( '(' condition=Condition ')')?action=[Action|STRING]
+;

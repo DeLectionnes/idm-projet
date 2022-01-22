@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" name="prototypeExplo" version="12.0.0.2017041100">
+  <ownedViewpoints name="prototypeExploViewpoint" modelFileExtension="expl">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="ExploDiagram" domainClass="prototypeExplo::MainMap" enablePopupBars="true">
+      <defaultLayer name="Default">
+        <nodeMappings name="Explorer" domainClass="prototypeExplo::Explorer">
+          <style xsi:type="style:SquareDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_purple']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="Item" domainClass="prototypeExplo::Item">
+          <style xsi:type="style:SquareDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='chocolate']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="NPC" domainClass="prototypeExplo::NPC">
+          <style xsi:type="style:SquareDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="Knowledge" domainClass="prototypeExplo::Knowledge">
+          <style xsi:type="style:SquareDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_yellow']"/>
+          </style>
+        </nodeMappings>
+        <toolSections name="MapElements">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Explorer" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@defaultLayer/@nodeMappings[name='Explorer']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Item" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@defaultLayer/@nodeMappings[name='Item']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="NPC" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@defaultLayer/@nodeMappings[name='NPC']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Knowledge" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@defaultLayer/@nodeMappings[name='Knowledge']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+        </toolSections>
+      </defaultLayer>
+      <additionalLayers name="Territoire" activeByDefault="true">
+        <nodeMappings name="Place" domainClass="prototypeExplo::Place">
+          <style xsi:type="style:SquareDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='green']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="Path" sourceMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Territoire']/@nodeMappings[name='Place']" targetMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Territoire']/@nodeMappings[name='Place']" domainClass="prototypeExplo::Path" useDomainElement="true">
+          <style sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription labelSize="12">
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <toolSections name="Territoire">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Place" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Territoire']/@nodeMappings[name='Place']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Path" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Territoire']/@edgeMappings[name='Path']">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation/>
+          </ownedTools>
+        </toolSections>
+      </additionalLayers>
+      <additionalLayers name="Interractions">
+        <nodeMappings name="Answer" domainClass="prototypeExplo::Answer">
+          <style xsi:type="style:EllipseNodeDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='green']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="Choice" domainClass="prototypeExplo::Choice">
+          <style xsi:type="style:EllipseNodeDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='orange']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="Action" domainClass="prototypeExplo::Action">
+          <style xsi:type="style:EllipseNodeDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='purple']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="Choice2Answer" sourceMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Choice']" targetMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Action']">
+          <style lineStyle="dash" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription labelSize="12">
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="Answer2Action" sourceMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Answer']" targetMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Action']">
+          <style lineStyle="dash" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription labelSize="12">
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="Answer2NextChoice" sourceMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Answer']" targetMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Choice']">
+          <style lineStyle="dash" sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription labelSize="12">
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <toolSections name="Interractions">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Answer" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Answer']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Choice" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Choice']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Action" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Action']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Choice2Answer" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@edgeMappings[name='Choice2Answer']">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Answer2Action">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation/>
+          </ownedTools>
+        </toolSections>
+      </additionalLayers>
+      <additionalLayers name="Conditions" activeByDefault="true">
+        <nodeMappings name="ConditionNode" domainClass="prototypeExplo::Condition">
+          <style xsi:type="style:LozengeNodeDescription" labelSize="12" labelExpression="Condition" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="AtomicCondition" domainClass="prototypeExplo::AtomicCondition">
+          <style xsi:type="style:EllipseNodeDescription" labelSize="12" labelExpression="aql[if self.item->isEmpty() then self.knowlegde else self.item.name endif/]" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="And" domainClass="prototypeExplo::Conjunction">
+          <style xsi:type="style:DotDescription" labelSize="12" labelExpression="And" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='green']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="Or" domainClass="prototypeExplo::NormalDisjunctiveForm">
+          <style xsi:type="style:DotDescription" labelSize="12" labelExpression="Or" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='red']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="Condition2Or" sourceMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='ConditionNode']" targetMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='Or']">
+          <style lineStyle="dot" targetArrow="NoDecoration" sizeComputationExpression="2" routingStyle="tree">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription labelSize="12">
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <edgeMappings name="Or2And" sourceMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='Or']" targetMapping="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='And']">
+          <style lineStyle="dot" targetArrow="NoDecoration" sizeComputationExpression="2" routingStyle="tree">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+            <centerLabelStyleDescription labelSize="12">
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
+        <toolSections name="Conditions">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Condition" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='ConditionNode']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="AtomicCondition" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='AtomicCondition']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="And" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='And']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="Or" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='Or']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Condition2Or" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@edgeMappings[name='Condition2Or']">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Or2And" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@edgeMappings[name='Or2And']">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation/>
+          </ownedTools>
+        </toolSections>
+      </additionalLayers>
+    </ownedRepresentations>
+    <ownedJavaExtensions qualifiedClassName="fr.n7.prototypeExplo.design.Services"/>
+  </ownedViewpoints>
+</description:Group>
