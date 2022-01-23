@@ -1,0 +1,9 @@
+map "Double explorer" {
+	
+	explorer "Dora" {
+		maxSize 2
+	}
+	explorer "Diego" {
+		maxSize 2
+	}
+}
