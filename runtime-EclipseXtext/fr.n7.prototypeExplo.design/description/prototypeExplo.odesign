@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" name="prototypeExplo" version="12.0.0.2017041100">
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" name="prototypeExplo" version="12.0.0.2017041100">
   <ownedViewpoints name="prototypeExploViewpoint" modelFileExtension="expl">
     <ownedRepresentations xsi:type="description_1:DiagramDescription" name="ExploDiagram" domainClass="prototypeExplo::MainMap" enablePopupBars="true">
       <defaultLayer name="Default">
@@ -35,22 +35,38 @@
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Explorer" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@defaultLayer/@nodeMappings[name='Explorer']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Explorer" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Item" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@defaultLayer/@nodeMappings[name='Item']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Item" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="NPC" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@defaultLayer/@nodeMappings[name='NPC']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::NPC" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Knowledge" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@defaultLayer/@nodeMappings[name='Knowledge']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Knowledge" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
         </toolSections>
       </defaultLayer>
@@ -74,14 +90,25 @@
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Place" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Territoire']/@nodeMappings[name='Place']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Place" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:EdgeCreationDescription" name="Path" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Territoire']/@edgeMappings[name='Path']">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
             <targetViewVariable name="targetView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[self.eContainer()/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Path" referenceName="MapElements">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="predecessor" valueExpression="[source/]"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="successor" valueExpression="[target/]"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
         </toolSections>
       </additionalLayers>
@@ -135,31 +162,65 @@
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Answer" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Answer']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Answer" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Choice" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Choice']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Choice" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Action" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@nodeMappings[name='Action']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Action" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:EdgeCreationDescription" name="Choice2Answer" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@edgeMappings[name='Choice2Answer']">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
             <targetViewVariable name="targetView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[self.eContainer()/]">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="Choice" valueExpression="[source/]"/>
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="Answer" valueExpression="[target/]"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Answer2Action">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Answer2Action" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@edgeMappings[name='Answer2Action']">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
             <targetViewVariable name="targetView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[self.eContainer()/]">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="Action" valueExpression="[source/]"/>
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="Answer" valueExpression="[target/]"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="Answer2NextChoice" label="Answer2NextChoice" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Interractions']/@edgeMappings[name='Answer2NextChoice']">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[self.eContainer()/]">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="Answer" valueExpression="[source/]"/>
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="NextChoice" valueExpression="[target/]"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
         </toolSections>
       </additionalLayers>
@@ -212,36 +273,62 @@
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Condition" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='ConditionNode']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Condition" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="AtomicCondition" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='AtomicCondition']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::AtomicCondition" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="And" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='And']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::Conjunction" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="Or" nodeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@nodeMappings[name='Or']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[container/]">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="prototypeExplo::NormalDisjunctiveForm" referenceName="MapElements"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:EdgeCreationDescription" name="Condition2Or" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@edgeMappings[name='Condition2Or']">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
             <targetViewVariable name="targetView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[self.eContainer()/]">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="Condition" valueExpression="[source/]"/>
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="Or" valueExpression="[target/]"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:EdgeCreationDescription" name="Or2And" edgeMappings="//@ownedViewpoints[name='prototypeExploViewpoint']/@ownedRepresentations[name='ExploDiagram']/@additionalLayers[name='Conditions']/@edgeMappings[name='Or2And']">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
             <targetViewVariable name="targetView"/>
-            <initialOperation/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="[self.eContainer()/]">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="Or" valueExpression="[source/]"/>
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="And" valueExpression="[target/]"/>
+              </firstModelOperations>
+            </initialOperation>
           </ownedTools>
         </toolSections>
       </additionalLayers>
