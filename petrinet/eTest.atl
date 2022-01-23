@@ -74,15 +74,6 @@ def: getExplorerNumber() : Integer =
 		-> select(item | item.name = self.name)
 		-> asSequence().size();
 
--- get the initial place's number of an item 
-helper context prototypeExplo!Item
-def: getPlaceNumber() : Integer =
-	prototypeExplo!Place.allInstances()
-	-> select(place | place.items.includes(self.name))
-	-> collect(place | place.oclAsType(prototypeExplo!Place))
-	-> select(item | item.name = self.name)
-	-> asSequence().size();
-
 -- tells if the item belongs to the explorer or not
 helper context prototypeExplo!Item
 def: isExplorers() : Boolean =
@@ -116,16 +107,16 @@ rule Place2PetriNet{
 rule Item2PetriNet {
 	from item : prototypeExplo!Item
 	do {
-		-- On vérifie que les places ne sont pas déjà créées
+		-- On vérifie que les states ne sont pas déjà créées
    		if (not item.exists()) {
-			-- Plus la state de l'explorateur
+			-- On crée le state de l'explorateur
 			thisModule.createItemExploState(item);
-   			-- Créer un state objet pour chaque place plus l'explorateur
+   			-- On crée aussi un state objet pour chaque place
 			for (place in prototypeExplo!Place.allInstances()) {
 				thisModule.createItemPlaceState(place, item);
 			}
    		}
-		-- Augmenter le nombre de token correspondant dans la bonne state
+		-- Enfin on augmente le nombre de token dans la bonne state
 		if (item.isExplorers()) {
 			item.getExploState().tokens <- item.getExploState().tokens + 1;
 		} else {
